@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.manage.mapper.AdminMapper">
+    <select id="select_by_adminId" resultType="adminDto">
+        set session transaction isolation level read uncommitted;
+
+        select      a.adminid, a.adminname, a.adminpwd, a.groupcode, a.authflag, a.pwderrcnt,
+                    b.groupwrite, b.groupread
+        from        admins as a
+        inner join  admin_groups as b on a.groupcode = b.groupcode
+        where       adminid = #{adminId}
+          and a.delflag = 'N';
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <insert id="login_insert">
+        insert into admin_logins (
+            adminid,
+            ip
+        ) values (
+                     #{adminId},
+                     #{ip}
+                 )
+    </insert>
+
+    <update id="update_for_login_success">
+        update admins set
+                          pwderrcnt = 0,
+                          updateid = #{adminId},
+                          updateip = #{ip},
+                          updatedt = now()
+        where adminid = #{adminId}
+    </update>
+
+    <update id="update_for_login_fail">
+        update admins set
+                          pwderrcnt = pwderrcnt + 1,
+                          updateid = #{adminId},
+                          updateip = #{ip},
+                          updatedt = now()
+        where adminid = #{adminId}
+    </update>
+
+
+</mapper>

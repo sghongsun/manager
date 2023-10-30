@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header">
+    <title>쇼핑몰 관리자</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0" />-->
+
+    <meta name="_csrf" th:content="${_csrf?.token}" th:if="${_csrf} ne null">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}" th:if="${_csrf} ne null">
+
+    <link rel="apple-touch-icon-precomposed" sizes="16x16" href="/images/cwfavicon.png?ver=0.1">
+    <link rel="shortcut icon" href="/images/cwfavicon.png?ver=0.1">
+
+    <link rel="stylesheet" th:href="@{/css/Style.css(ver=${@commonUtil.getNow()})}" type="text/css">
+    <!--[if lt IE 10]>
+    <link rel="stylesheet" href="/css/ie9.css" type="text/css">
+    <![endif]-->
+    <link rel="stylesheet" href="/css/jquery-ui-1.8.16.custom.css">
+
+    <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-migrate-1.4.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui.min.js"></script>    <!--1.9.1-->
+    <!--
+    <script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.ui.datepicker-ko.js"></script>
+    -->
+    <script type="text/javascript" th:src="@{/js/CheckChr.js(ver=${@commonUtil.getNow()})}"></script>
+    <script type="text/javascript" th:src="@{/js/CheckVal.js(ver=${@commonUtil.getNow()})}"></script>
+    <script type="text/javascript" th:src="@{/js/common.js(ver=${@commonUtil.getNow()})}"></script>
+    <script type="text/javascript" th:src="@{/js/cmm_loc.js(ver=${@commonUtil.getNow()})}"></script>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="/js/html5shiv.js"></script>
+    <![endif]-->
+</head>

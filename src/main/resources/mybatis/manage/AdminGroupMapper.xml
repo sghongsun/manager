@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.manage.mapper.AdminGroupMapper">
+    <select id="select_by_groupCode" resultType="adminGroupDto">
+        set session transaction isolation level read uncommitted;
+
+        select      groupcode, groupname, groupdesc, groupwrite, groupread
+        from        admin_groups
+        where       groupcode = #{groupcode};
+
+        set session transaction isolation level repeatable read;
+    </select>
+</mapper>

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko" xml:lang="ko" >
+<head th:replace="~{/layout/header::header}"></head>
+
+<body topmargin="0" leftmargin="0" style="background:#ffffff">
+
+<form name="form" method="post" action="/login">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <div class="admin_login_wrap">
+        <div class="admin_login">
+            <p><strong>쇼핑몰관리자</strong> 페이지 입니다.<br />&nbsp;</p>
+            <!--<h1>ADMIN LOGIN</h1>-->
+            <div class="table_s02" style="padding-top:0px;">
+                <table cellpadding="0" cellspacing="0" border="0" class="field">
+                    <colgroup>
+                        <col style="width:100%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="none"><input name="mid" type="text" class="inp" value="" placeholder="관리자 아이디" style="width:310px;"></td>
+                    </tr>
+                    <tr>
+                        <td><input name="mpwd" type="password" class="inp" value="" placeholder="비밀번호" style="width:310px;"></td>
+                    </tr>
+                    <tr>
+                        <td class="none">
+                            <label><input name="saveid" type="checkbox" value="Y"> 아이디저장</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" value="" class="btn_login"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:if="${saveid} == 'Y'">
+        <script type="text/javascript">
+            $(function () {
+                $("input:checkbox[name='saveid']").prop('checked', true);
+                $("input[name='mid']").val("[[ ${saveadminid}]]")
+            });
+        </script>
+    </th:block>
+    <script type="text/javascript">
+        $(function () {
+            if ($("input:checkbox[name='saveid']").is(":checked")) {
+                $("input[name='mpwd']").focus();
+            }
+            else {
+                $("input[name='mid']").focus();
+            }
+        });
+    </script>
+
+</form>
+</body>
+</html>

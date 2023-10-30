@@ -1,0 +1,5 @@
+﻿@charset "UTF-8";
+
+@font-face {font-family:ng; src:url(fonts/NanumGothic.eot); src:local(※), url(fonts/NanumGothic.woff) format('woff') }
+@font-face {font-family:ngb;src:url(fonts/NanumGothicBold.eot);src:local(※),url(fonts/NanumGothicBold.woff) format('woff') }
+@font-face {font-family:ngeb;src:url(fonts/NanumGothicExtraBold.eot);src:local(※),url(fonts/NanumGothicExtraBold.woff) format('woff') }

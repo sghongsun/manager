@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.manage.mapper.MenuChoiceMapper">
+    <select id="select_by_adminId" resultType="menuChoiceDto">
+        set session transaction isolation level read uncommitted;
+
+        select      a.menucode, a.dispnum, b.menuname, b.menuurl
+        from        admin_menu_choices as a
+        inner join  admin_menus as b on a.menucode = b.menucode
+        where       a.adminid = #{adminid}
+          and         b.menuuseflag = 'Y'
+          and         b.menuchoice = 'Y'
+        order by    a.dispnum ASC;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <delete id="delete_by_menuCode">
+        delete
+        from        admin_menu_choices
+        where       menucode = #{menuCode}
+    </delete>
+</mapper>
