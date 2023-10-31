@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Setter
 public class SearchDto {
-    @Setter
     private int page;
     private int recordsize;
     private int pagesize;

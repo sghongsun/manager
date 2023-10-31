@@ -27,7 +27,7 @@ public class CommonController {
         return "login/login";
     }
 
-    @GetMapping("/editorfileupload")
+    @GetMapping("/common/editorfileupload")
     public String editorfileupload(
             @RequestParam String I1,
             @RequestParam String DetailFolder,
@@ -39,7 +39,7 @@ public class CommonController {
         return "main/editorfileupload";
     }
 
-    @PostMapping("/editorfileuploadok")
+    @PostMapping("/common/editorfileupload")
     public void editorfileuploadok(
             @RequestParam("UpdateImage") MultipartFile file,
             HttpServletRequest request

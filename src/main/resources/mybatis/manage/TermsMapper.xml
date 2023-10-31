@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.manage.mapper.TermsMapper">
+    <select id="select_by_list_for_totalCount" parameterType="termsSearchDto" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                        IFNULL(COUNT(idx), 0) as totalcount
+        from            terms
+        where           delflag = 'N'
+        <include refid="terms_search" />
+        ;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_list" parameterType="termsSearchDto" resultType="termsDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                        idx, title, place, createid, createdt
+        from            terms
+        where           delflag = 'N'
+                        <include refid="terms_search" />
+        order by        idx desc
+        limit           #{pagination.limitStart}, #{recordsize};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <sql id="terms_search">
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="'title'.equals(searchtype)">
+                    and title LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="'contents'.equals(searchtype)">
+                    and contents LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <insert id="insert_terms" parameterType="termsDto">
+        insert into terms (
+            title,
+            place,
+            contents,
+            createid,
+            createip
+        ) values (
+                     #{title},
+                     #{place},
+                     #{contents},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <select id="select_by_idx" resultType="termsDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    idx, title, place, contents, createid, createdt
+        from        terms
+        where       idx = #{idx};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_terms" parameterType="termsDto">
+        update terms set
+                         title = #{title},
+                         place = #{place},
+                         contents = #{contents},
+                         updateid = #{createid},
+                         updateip = #{createip},
+                         updatedt = now()
+        where idx = #{idx}
+    </update>
+
+    <update id="delete_terms" parameterType="termsDto">
+        update terms set
+                         delflag = 'Y',
+                         updateid = #{createid},
+                         updateip = #{createip},
+                         updatedt = now()
+        where idx = #{idx}
+    </update>
+</mapper>

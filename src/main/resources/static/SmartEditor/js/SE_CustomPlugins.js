@@ -16,7 +16,7 @@ nhn.husky.SE_ImageUpload = $Class({
 
 $ON_SE_TOGGLE_IMAGEUPLOAD_LAYER: function () {
   this.oApp.exec("TOGGLE_TOOLBAR_ACTIVE_LAYER", [this.oImageUploadLayer]);
-  imgUploadFrame.location = "/editorfileupload?I1=" + this.oApp.sAppId + "&DetailFolder=" + this.oApp.detailFN;
+  imgUploadFrame.location = "/common/editorfileupload?I1=" + this.oApp.sAppId + "&DetailFolder=" + this.oApp.detailFN;
   }
 });
 

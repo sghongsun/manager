@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="paging" class="paging pgDown">
+    <th:block th:if="${searchDto.getPagination().isExistPrevPage()}">
+        <a th:data-page="${searchDto.getPagination().getStartPage() - searchDto.getPagesize()}" href="javascript:void(0);" th:onclick="movePage(this.getAttribute('data-page'))">◀</a>
+    </th:block>
+    <th:block th:unless="${searchDto.getPagination().isExistPrevPage()}">
+        <a>◀</a>
+    </th:block>
+
+    <th:block th:each="i : ${#numbers.sequence(searchDto.getPagination().getStartPage(), searchDto.getPagination().getEndPage())}">
+        <th:block th:if="${i < searchDto.getPagination().getEndPage()}">
+            <span><a th:data-page="${i}" href="javascript:void(0);" th:onclick="movePage(this.getAttribute('data-page'))" th:text="${i}" th:class="${i == searchDto.getPage()} ? 'on' : ''"></a></span>
+        </th:block>
+        <th:block th:unless="${i < searchDto.getPagination().getEndPage()}">
+            <a th:data-page="${i}" href="javascript:void(0);" th:onclick="movePage(this.getAttribute('data-page'))" th:text="${i}" th:class="${i == searchDto.getPage()} ? 'on' : ''"></a>
+        </th:block>
+    </th:block>
+
+    <th:block th:if="${searchDto.getPagination().isExistNextPage()}">
+        <a th:data-page="${searchDto.getPagination().getEndPage() + 1}" href="javascript:void(0);" th:onclick="movePage(this.getAttribute('data-page'))">▶</a>
+    </th:block>
+    <th:block th:unless="${searchDto.getPagination().isExistNextPage()}">
+        <a>▶</a>
+    </th:block>
+</div>
+

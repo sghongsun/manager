@@ -145,16 +145,18 @@ public class AuthPermission {
            thisPage = request.getRequestURI();
        }
 
-       MenuDto menuDto = menuService.getMenuInfoByMenuUrl(thisPage);
-       if (menuDto == null) {
-           CommonUtil.AlertMessage("유효하지 않은 경로 입니다.", returnPageType);
-           return false;
-       }
-       /* URL 정보 */
+       if (!thisPage.contains("/common")) {
+           MenuDto menuDto = menuService.getMenuInfoByMenuUrl(thisPage);
+           if (menuDto == null) {
+               CommonUtil.AlertMessage("유효하지 않은 경로 입니다.", returnPageType);
+               return false;
+           }
+           /* URL 정보 */
 
-       if (!adminGroupDto.getGroupwrite().contains(menuDto.getMenucode())) {
-           CommonUtil.AlertMessage("권한이 없습니다.", returnPageType);
-           return false;
+           if (!adminGroupDto.getGroupwrite().contains(menuDto.getMenucode())) {
+               CommonUtil.AlertMessage("권한이 없습니다.", returnPageType);
+               return false;
+           }
        }
        return true;
    }

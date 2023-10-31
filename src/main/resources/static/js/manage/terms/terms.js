@@ -68,7 +68,7 @@ function mod_Terms(){
 
 function del_Terms() {
     if (confirm('삭제 하시겠습니까?')) {
-        document.form.action = "/manage/terms/delok";
+        document.form.action = "/manage/terms/delete";
         document.form.submit();
     }
 }
