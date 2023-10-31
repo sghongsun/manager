@@ -11,6 +11,7 @@ import me.sghong.manager.app.manage.request.TermsDeleteRequest;
 import me.sghong.manager.app.manage.request.TermsModifyRequest;
 import me.sghong.manager.util.CommonUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +35,7 @@ public class TermsService {
         return new PagingDto<>(termsDtoList, pagination);
     }
 
+    @Transactional
     public void insertTerms(TermsAddRequest termsAddRequest) {
         TermsDto termsDto = TermsDto.builder()
                 .title(termsAddRequest.getTitle())
@@ -49,18 +51,20 @@ public class TermsService {
         return termsMapper.select_by_idx(idx);
     }
 
-    public void updateTerms(TermsModifyRequest termsModifyRequest, TermsAddRequest termsAddRequest) {
+    @Transactional
+    public void updateTerms(TermsModifyRequest termsModifyRequest) {
         TermsDto termsDto = TermsDto.builder()
                 .idx(termsModifyRequest.getIdx())
-                .title(termsAddRequest.getTitle())
-                .place(termsAddRequest.getPlace())
-                .contents(termsAddRequest.getContents())
+                .title(termsModifyRequest.getTitle())
+                .place(termsModifyRequest.getPlace())
+                .contents(termsModifyRequest.getContents())
                 .createid(CommonUtil.getSession("adminid"))
                 .createip(CommonUtil.getSession("ip"))
                 .build();
         termsMapper.update_terms(termsDto);
     }
 
+    @Transactional
     public void deleteTerms(TermsDeleteRequest termsDeleteRequest) {
         TermsDto termsDto = TermsDto.builder()
                 .idx(termsDeleteRequest.getIdx())

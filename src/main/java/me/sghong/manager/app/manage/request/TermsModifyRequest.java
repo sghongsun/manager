@@ -13,5 +13,13 @@ import lombok.NoArgsConstructor;
 public class TermsModifyRequest {
     @Positive(message = "잘못 된 값입니다.")
     private int idx;
-    private TermsAddRequest termsAddRequest;
+
+    @NotBlank(message = "제목을 입력하여 주세요.")
+    private String title;
+
+    @NotBlank(message = "적용위치를 입력하여 주세요.")
+    private String place;
+
+    @NotBlank(message = "내용을 입력하여 주세요.")
+    private String contents;
 }

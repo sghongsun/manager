@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import me.sghong.manager.app.common.dto.MessageDto;
 import me.sghong.manager.app.manage.dto.MenuDto;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
@@ -219,6 +221,11 @@ public class CommonUtil {
                 return "";
             }
         }
+    }
+
+    public static String shoeMessageAndRedirect(MessageDto messageDto, Model model) {
+        model.addAttribute("params", messageDto);
+        return "common/messageRedirect";
     }
 
 }

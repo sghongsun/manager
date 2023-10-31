@@ -1,7 +1,9 @@
 package me.sghong.manager.app.manage.conrtorller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import groovyjarjarpicocli.CommandLine;
 import lombok.RequiredArgsConstructor;
+import me.sghong.manager.app.common.dto.MessageDto;
 import me.sghong.manager.app.manage.dto.TermsSearchDto;
 import me.sghong.manager.app.manage.request.TermsAddRequest;
 import me.sghong.manager.app.manage.request.TermsDeleteRequest;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 @RequiredArgsConstructor
 @Controller
@@ -70,26 +73,49 @@ public class TermsController {
 
     @PostMapping("/modify")
     public String termsModifyOk(
-            TermsModifyRequest termsModifyRequest,
-            TermsAddRequest termsAddRequest,
+            Model model,
+            @Validated TermsModifyRequest termsModifyRequest,
             TermsSearchDto termsSearchDto,
             RedirectAttributes rt
     ) throws IOException {
-        termsService.updateTerms(termsModifyRequest, termsAddRequest);
+        termsService.updateTerms(termsModifyRequest);
         //CommonUtil.AlertMessage("수정 되었습니다.", "");
-        rt.addFlashAttribute("searchDto", termsSearchDto);
-        return "redirect:/manage/terms/list";
+        //rt.addAttribute("searchDto", termsSearchDto);
+        //return "redirect:/manage/terms/list";
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, Object> map = objectMapper.convertValue(termsSearchDto, HashMap.class);
+
+        MessageDto messageDto = MessageDto.builder()
+                .message("수정 되었습니다.")
+                .redirectUri("/manage/terms/list")
+                .method(RequestMethod.GET)
+                .data(map)
+                .build();
+        return CommonUtil.shoeMessageAndRedirect(messageDto, model);        
     }
 
     @PostMapping("/delete")
     public String termsDeleteOk(
+            Model model,
             @Validated TermsDeleteRequest termsDeleteRequest,
             TermsSearchDto termsSearchDto,
             RedirectAttributes rt
     ) throws IOException {
         termsService.deleteTerms(termsDeleteRequest);
-        rt.addFlashAttribute("searchDto", termsSearchDto);
+        //rt.addFlashAttribute("searchDto", termsSearchDto);
         //CommonUtil.AlertMessage("삭제 되었습니다.", "");
-        return "redirect:/manage/terms/list";
+        //return "redirect:/manage/terms/list";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, Object> map = objectMapper.convertValue(termsSearchDto, HashMap.class);
+
+        MessageDto messageDto = MessageDto.builder()
+                .message("삭제 되었습니다.")
+                .redirectUri("/manage/terms/list")
+                .method(RequestMethod.GET)
+                .data(map)
+                .build();
+        return CommonUtil.shoeMessageAndRedirect(messageDto, model);
     }
 }
