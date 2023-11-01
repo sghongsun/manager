@@ -1,0 +1,79 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout_popup}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/manage/group/group.js(ver=${@commonUtil.getNow()})}"></script>
+    <h3 class="h3" style="position:relative;">
+        <span>그룹별 관리자 현황</span>
+    </h3>
+
+    <div class="filterArea">
+        <div class="tb_layout_1">
+
+            <table>
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title">검색조건</td>
+                    <td>
+                        <select name="GroupCode" id="GroupCode" onchange="adminlist();">
+                            <option th:each="group : ${admingroupList}" th:value="${group.getGroupcode()}" th:text="${group.getGroupname()}"></option>
+                        </select>
+                        <script type="text/javascript">
+                            $("#GroupCode").val(`[[${groupCode}]]`);
+                        </script>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="tb_data_1">
+        <div class="tip"></div>
+        <div class="btnRight3"></div>
+
+        <table>
+            <colgroup>
+                <col style="width:  10%;" />
+                <col style="width:  17%;" />
+                <col style="width:  17%;" />
+                <col style="width:  17%;" />
+                <col style="width:  17%;" />
+                <col style="width: auto;" />
+            </colgroup>
+            <thead>
+            <tr>
+                <th>No.</th>
+                <th>이름</th>
+                <th>아이디</th>
+                <th>그룹</th>
+                <th>핸드폰</th>
+                <th>등록일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="admin, loop :  ${adminList}">
+                <td th:text="${loop.index+1}"></td>
+                <td th:text="${admin.getAdminname()}"></td>
+                <td th:text="${admin.getAdminid()}"></td>
+                <td th:text="${admin.getGroupname()}"></td>
+                <td th:text="${admin.getHp()}"></td>
+                <td th:text="${#temporals.format(admin.getCreatedt(), 'yyyy-MM-dd')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="posR mt20">
+        <div class="ac">
+            <a href="javascript:self.close()" class="btn-d"><span>닫기</span></a>
+        </div>
+    </div>
+</div>

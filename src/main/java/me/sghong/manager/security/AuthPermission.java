@@ -33,7 +33,7 @@ public class AuthPermission {
             return null;
         }
 
-        AdminGroupDto adminGroupDto = adminGroupService.getInfoByGroupCode(adminGroup);
+        AdminGroupDto adminGroupDto = adminGroupService.getInfoByGroupCode(Integer.parseInt(adminGroup));
         if (adminGroupDto == null) {
             CommonUtil.AlertMessage("유효하지 않은 경로 입니다.", returnPageType);
             return null;
@@ -120,7 +120,7 @@ public class AuthPermission {
            return false;
        }
 
-       AdminGroupDto adminGroupDto = adminGroupService.getInfoByGroupCode(adminGroup);
+       AdminGroupDto adminGroupDto = adminGroupService.getInfoByGroupCode(Integer.parseInt(adminGroup));
        if (adminGroupDto == null) {
            CommonUtil.AlertMessage("유효하지 않은 경로 입니다.", returnPageType);
            return false;

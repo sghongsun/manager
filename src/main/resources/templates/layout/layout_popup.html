@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout_popup">
+<head th:replace="~{/layout/header::header}"></head>
+
+<body>
+
+<style>
+    #loading2 {position:fixed;display:inline-block;padding:50px;top:50%;left:50%;margin-top:-145px;margin-left:-115px;background:#ffffff;border:1px solid #000;z-index:1000;display:none;}
+</style>
+<div id="loading2">
+    <img src="/images/loading.gif" alt="처리중" />
+    <p class="ac mt20 b" id="msg">처리 중 입니다...</p>
+</div>
+
+<div class="popup_wrap">
+
+    <div class="popup_container">
+        <div class="realCon">
+            <th:block layout:fragment="content"></th:block>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    #dimmed {position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: #111; opacity: 0.5; -ms-filter: alpha(opacity=50); filter: alpha(opacity=50); z-index: 500; display:none; }
+    .popup {position: absolute; left:50%; -webkit-transform:none; transform:none; background-color: #ffffff; padding: 10px 20px; z-index:501; display:none;}
+    #popup {position: fixed;}
+    #loading {position:fixed;display:inline-block;padding:50px;top:50%;left:50%;margin-top:-75px;margin-left:-75px;background:#ffffff;border:1px solid #000;z-index:1000;display:none;}
+</style>
+<div class="popup" id="PopupLayer"></div>
+<div id="popup" class="layerPop"></div>
+<div id="popup1" class="layerPop"></div>
+
+<div id="loading">
+    <img src="/images/loading.gif" alt="처리중" />
+    <p class="ac mt20 b" id="msg">처리 중 입니다...</p>
+</div>
+<div id="dimmed">&nbsp;</div>
+
+
+
+</body>
+</html>

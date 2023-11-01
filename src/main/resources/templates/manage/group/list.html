@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/manage/group/group.js(ver=${@commonUtil.getNow()})}"></script>
+    <div class="tb_data_1">
+
+        <div class="btnRight3" th:if="${Permission.isWrite()}">
+            <a href="/manage/group/add" class="btn-c"><span>그룹입력</span></a>
+        </div>
+
+        <table>
+            <colgroup>
+                <col style="width: 10%;" />
+                <col style="width: 20%;" />
+                <col style="width: auto;" />
+                <col style="width: 10%;" />
+                <col style="width: 10%;" />
+            </colgroup>
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>그룹명</th>
+                <th>그룹설명</th>
+                <th>관리자수</th>
+                <th>현황</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="group, loop : ${admingroupList}">
+                <tr>
+                    <td th:text="${loop.index + 1}"></td>
+                    <td>
+                        <th:block th:if="${Permission.isWrite()}">
+                            <a style="color:#0000ff" th:href="@{|/manage/group/modify/${group.getGroupcode()}|}" th:text="${group.getGroupname()}"></a>
+                        </th:block>
+                        <th:block th:unless="${Permission.isWrite()}">
+                            [[${group.getGroupname()}]]
+                        </th:block>
+
+                    </td>
+                    <td class="al pl10" th:text="${group.getGroupdesc()}"></td>
+                    <td th:text="${group.getAdmincnt()}"></td>
+                    <td>
+                        <a th:data-groupcode="${group.getGroupcode()}" th:onclick="list_Admin(this.getAttribute('data-groupcode'))" class="btn-c" style="cursor: pointer;"><span>현황</span></a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>

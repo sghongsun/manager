@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class AdminDto {
     private String adminid;
     private String adminpwd;
@@ -21,8 +22,6 @@ public class AdminDto {
     private String groupwrite;
     private String groupread;
     private LocalDateTime createdt;
-    @Setter
-    private String id;
-    @Setter
-    private String ip;
+    private String createid;
+    private String createip;
 }

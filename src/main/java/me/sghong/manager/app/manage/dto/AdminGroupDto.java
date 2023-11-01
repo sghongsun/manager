@@ -7,6 +7,7 @@ import org.apache.ibatis.type.Alias;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class AdminGroupDto {
     private int groupcode;
     private String groupname;
@@ -14,8 +15,6 @@ public class AdminGroupDto {
     private String groupwrite;
     private String groupread;
     private int admincnt;
-    @Setter
-    private String id;
-    @Setter
-    private String ip;
+    private String createid;
+    private String createip;
 }

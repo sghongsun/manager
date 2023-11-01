@@ -8,6 +8,8 @@ import me.sghong.manager.util.CommonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class AdminService {
@@ -25,5 +27,9 @@ public class AdminService {
     public void AdminLoginSuccess(String adminId) {
         adminMapper.update_for_login_success(adminId, CommonUtil.getRemoteIP());
         adminMapper.login_insert(adminId, CommonUtil.getRemoteIP());
+    }
+
+    public List<AdminDto> getAdminListByGroupCode(int groupCode) {
+        return adminMapper.select_by_groupcode(groupCode);
     }
 }

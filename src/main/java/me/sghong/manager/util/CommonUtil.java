@@ -200,6 +200,22 @@ public class CommonUtil {
         return str;
     }
 
+    public static String ArrarytoStringForComma(String[] array) {
+        String result = "";
+
+        if (array.length > 0) {
+            StringBuilder sb = new StringBuilder();
+
+            for (String s : array) {
+                sb.append(s).append(",");
+            }
+
+            result = sb.deleteCharAt(sb.length() - 1).toString();
+        }
+
+        return result;
+    }
+
     public static String getProductClassName(String type) {
         switch (type) {
             case "P" -> {

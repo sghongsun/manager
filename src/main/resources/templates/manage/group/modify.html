@@ -1,0 +1,196 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/manage/group/group.js(ver=${@commonUtil.getNow()})}"></script>
+    <form name="form" method="post" th:action="|/manage/group/modify/${admingroup.getGroupcode()}|" onsubmit="return checkField(this)">
+        <div class="tb_layout_1">
+            <table>
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">그룹명</span></td>
+                    <td><input type="text" name="groupname" id="GroupName" maxlength="20" th:value="${admingroup.getGroupname()}" class="input_text" style="width: 30%;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">그룹설명</span></td>
+                    <td><input type="text" name="groupdesc" id="GroupDesc" maxlength="60" th:value="${admingroup.getGroupdesc()}" class="input_text" style="width: 70%;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">그룹권한</span></td>
+                    <td>
+                        <table class="tb_data_1 embed">
+                            <colgroup>
+                                <col style="width: 40px;">
+                                <col style="width: 40px;">
+                                <col style="width: auto;">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>쓰기</th>
+                                <th>읽기</th>
+                                <th>메뉴</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <th:block th:each="depth1 : ${depth1MenuList}">
+                                <tr style="background:#EFEFF7;">
+                                    <td><input type="checkbox" name="main_write" th:data-code="${depth1.getMenucode()}" th:id="'main_write_'+${depth1.getMenucode()}" th:value="${depth1.getMenucode()}" th:checked="${#strings.contains(admingroup.getGroupwrite(), depth1.getMenucode()) ? 'true' : 'false'}" /></td>
+                                    <td><input type="checkbox" name="main_read" th:data-code="${depth1.getMenucode()}" th:id="'main_read_'+${depth1.getMenucode()}" th:value="${depth1.getMenucode()}" th:checked="${#strings.contains(admingroup.getGroupread(), depth1.getMenucode()) ? 'true' : 'false'}" /></td>
+                                    <td class="al pl10" th:text="${depth1.getMenuname()}"></td>
+                                </tr>
+                                <tr th:each="depth2 : ${depth2MenuList}" th:if="${depth2.getMenupcode() == depth1.getMenucode()}">
+                                    <td><input type="checkbox" name="sub_write" th:data-parent-code="${depth1.getMenucode()}" th:value="${depth2.getMenucode()}" th:checked="${#strings.contains(admingroup.getGroupwrite(), depth2.getMenucode()) ? 'true' : 'false'}" /></td>
+                                    <td><input type="checkbox" name="sub_read" th:data-parent-code="${depth1.getMenucode()}" th:value="${depth2.getMenucode()}" th:checked="${#strings.contains(admingroup.getGroupread(), depth2.getMenucode()) ? 'true' : 'false'}" /></td>
+                                    <td class="al pl10" th:text="${depth2.getMenuname()}"></td>
+                                </tr>
+                            </th:block>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="posR mt20">
+            <div class="btnRight2">
+                <th:block th:if="${Permission.isWrite()}">
+                    <button class="btn-c"><span>수정</span></button>
+                    <a href="javascript:deleteGroup()" class="btn-c"><span>삭제</span></a>
+                </th:block>
+                <a href="/manage/group/list" class="btn-d"><span>목록</span></a>
+            </div>
+        </div>
+
+    </form>
+
+    <form name="delform" method="post" th:action="|/manage/group/delete/${admingroup.getGroupcode()}|">
+    </form>
+    <script type="text/javascript">
+        $(function () {
+            /* 대분류 쓰기 체크박스 클릭 */
+            $("input:checkbox[name='main_write']").click(function () {
+                var code = $(this).val();
+                var chk = $(this).is(":checked");
+                var idx = $("input:checkbox[name='main_write']").index(this);
+
+                if (chk) {
+                    $("input:checkbox[name='main_read']").eq(idx).attr("checked", true);
+                }
+
+                $("input:checkbox[name='sub_write']").each(function (num) {
+                    if (code == $(this).attr("data-parent-code")) {
+                        if (chk) {
+                            $(this).attr("checked", true);
+                            $("input:checkbox[name='sub_read']").eq(num).attr("checked", true);
+                        }
+                        else {
+                            $(this).attr("checked", false);
+                        }
+                    }
+                });
+            });
+
+            /* 대분류 읽기 체크박스 클릭 */
+            $("input:checkbox[name='main_read']").click(function () {
+                var code = $(this).val();
+                var chk = $(this).is(":checked");
+                var idx = $("input:checkbox[name='main_read']").index(this);
+
+                if (!chk) {
+                    $("input:checkbox[name='main_write']").eq(idx).attr("checked", false);
+                }
+
+                $("input:checkbox[name='sub_read']").each(function (num) {
+                    if (code == $(this).attr("data-parent-code")) {
+                        if (chk) {
+                            $(this).attr("checked", true);
+                        }
+                        else {
+                            $(this).attr("checked", false);
+                            $("input:checkbox[name='sub_write']").eq(num).attr("checked", false);
+                        }
+                    }
+                });
+            });
+
+            /* 소분류 쓰기 체크박스 클릭 */
+            $("input:checkbox[name='sub_write']").click(function () {
+                var parent_code = $(this).attr("data-parent-code");
+                var chk = $(this).is(":checked");
+                var idx = $("input:checkbox[name='sub_write']").index(this);
+                var other_chk = false;
+
+                if (chk) {
+                    $("input:checkbox[name='sub_read']").eq(idx).attr("checked", true);
+                }
+                else {
+                    $("input:checkbox[name='sub_write']").each(function (num) {
+                        if (parent_code == $(this).attr("data-parent-code")) {
+                            if (idx != num) {
+                                if ($(this).is(":checked")) {
+                                    other_chk = true;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                $("input:checkbox[name='main_write']").each(function (num) {
+                    if (parent_code == $(this).attr("data-code")) {
+                        if (chk) {
+                            $(this).attr("checked", true);
+                            $("input:checkbox[name='main_read']").eq(num).attr("checked", true);
+                        }
+                        else {
+                            if (!other_chk) {
+                                $(this).attr("checked", false);
+                            }
+                        }
+                    }
+                });
+            });
+
+            /* 소분류 읽기 체크박스 클릭 */
+            $("input:checkbox[name='sub_read']").click(function () {
+                var parent_code = $(this).attr("data-parent-code");
+                var chk = $(this).is(":checked");
+                var idx = $("input:checkbox[name='sub_read']").index(this);
+                var other_chk = false;
+
+                if (!chk) {
+                    $("input:checkbox[name='sub_write']").eq(idx).attr("checked", false);
+
+                    $("input:checkbox[name='sub_read']").each(function (num) {
+                        if (parent_code == $(this).attr("data-parent-code")) {
+                            if (idx != num) {
+                                if ($(this).is(":checked")) {
+                                    other_chk = true;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                $("input:checkbox[name='main_read']").each(function (num) {
+                    if (parent_code == $(this).attr("data-code")) {
+                        if (chk) {
+                            $(this).attr("checked", true);
+                        }
+                        else {
+                            if (!other_chk) {
+                                $(this).attr("checked", false);
+                                $("input:checkbox[name='main_write']").eq(num).attr("checked", false);
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</div>

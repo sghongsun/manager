@@ -12,6 +12,7 @@ public interface MenuMapper {
     List<MenuDto> select_by_Depth1_For_All();
     List<MenuDto> select_by_Depth2_For_Use(String menuPCode);
     List<MenuDto> select_by_Depth2_For_All(String menuPCode);
+    List<MenuDto> select_by_Depth2_For_All_NoPCode();
     MenuDto select_by_menuUrl(String menuUrl);
     int select_by_menuUrl_Like_Count(String menuCode, String menuUrl);
     int select_by_max_menucode(String menuPCode);

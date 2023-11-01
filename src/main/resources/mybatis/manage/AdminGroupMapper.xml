@@ -13,4 +13,95 @@
 
         set session transaction isolation level repeatable read;
     </select>
+
+    <select id="select_by_list" resultType="adminGroupDto">
+        set session transaction isolation level read uncommitted;
+
+        select      groupcode, groupname, groupdesc,
+                    (select count(*) from admins where admin_groups.groupcode = admins.groupcode and admins.delflag = 'N') as admincnt
+        from        admin_groups
+        where       groupcode != '1000'
+        order by    groupcode desc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_menu_include_for_count" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select      IFNULL(COUNT(groupcode), 0) as groupcount
+        from        admin_groups
+        where       groupread LIKE CONCAT('%', #{menucode}, '%')
+        or          groupwrite LIKE CONCAT('%', #{menucode}, '%');
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_groupcode_max" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select      IFNULL(MAX(groupcode), 1000) + 1
+        from        admin_groups;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <insert id="insert_admingroup" parameterType="adminGroupDto">
+        insert into admin_groups (
+            groupcode,
+            groupname,
+            groupdesc,
+            groupwrite,
+            groupread,
+            createid,
+            createip
+        ) values (
+                     #{groupcode},
+                     #{groupname},
+                     #{groupdesc},
+                     #{groupwrite},
+                     #{groupread},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <update id="update_admingroup" parameterType="adminGroupDto">
+        update admin_groups set
+                                groupname = #{groupname},
+                                groupdesc = #{groupdesc},
+                                groupwrite = #{groupwrite},
+                                groupread = #{groupread},
+                                updateid = #{createid},
+                                updateip = #{createip},
+                                updatedt = now()
+        where groupcode = #{groupcode}
+    </update>
+
+    <delete id="delete_admingroup">
+        delete from admin_groups where groupcode = #{groupcode}
+    </delete>
+
+    <select id="select_by_list_for_adminList" parameterType="Map" resultType="Map">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    groupcode, groupname, groupdesc, createdt,
+                    (select IFNULL(COUNT(adminid), 0) from admins where groupcode = admin_groups.groupcode and delflag = 'N') as admincount
+        from        admin_groups
+        where       groupcode != '1000'
+        <choose>
+            <when test='authtype.equals("R")'>
+                and groupread LIKE CONCAT('%', #{mcode2}, '%')
+            </when>
+            <otherwise>
+                and groupwrite LIKE CONCAT('%', #{mcode2}, '%')
+            </otherwise>
+        </choose>
+        ;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+
 </mapper>

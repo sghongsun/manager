@@ -46,6 +46,10 @@ public class MenuService {
         return menuMapper.select_by_Depth2_For_All(PCode);
     }
 
+    public List<MenuDto> getMenuDepth2ForAll() {
+        return menuMapper.select_by_Depth2_For_All_NoPCode();
+    }
+
     @Transactional
     public String addMenu(
             MenuAddRequest menuAddRequest
