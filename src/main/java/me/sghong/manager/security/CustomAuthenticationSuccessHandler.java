@@ -3,10 +3,10 @@ package me.sghong.manager.security;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import me.sghong.manager.app.common.service.MyMenuChoiceService;
 import me.sghong.manager.app.manage.dto.AdminDto;
-import me.sghong.manager.app.manage.dto.MenuChoiceDto;
+import me.sghong.manager.app.common.dto.MyMenuChoiceDto;
 import me.sghong.manager.app.manage.service.AdminService;
-import me.sghong.manager.app.manage.service.MenuChoiceService;
 import me.sghong.manager.util.CommonUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -26,7 +26,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final RequestCache requestCache = new HttpSessionRequestCache();
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private final AdminService adminService;
-    private final MenuChoiceService menuChoiceService;
+    private final MyMenuChoiceService myMenuChoiceService;
 
     @Override
     public void onAuthenticationSuccess(
@@ -41,10 +41,10 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         adminService.AdminLoginSuccess(id);
 
         String MenuChoice = "";
-        List<MenuChoiceDto> menuChoiceDtoList = menuChoiceService.getList(id);
-        if (!menuChoiceDtoList.isEmpty()) {
+        List<MyMenuChoiceDto> myMenuChoiceDtoList = myMenuChoiceService.getList(id);
+        if (!myMenuChoiceDtoList.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            for(MenuChoiceDto key : menuChoiceDtoList) {
+            for(MyMenuChoiceDto key : myMenuChoiceDtoList) {
                 sb.append(key.getMenucode()).append(",");
             }
             MenuChoice = sb.deleteCharAt(sb.length() - 1).toString();

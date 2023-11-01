@@ -1,6 +1,7 @@
 package me.sghong.manager.app.manage.service;
 
 import lombok.RequiredArgsConstructor;
+import me.sghong.manager.app.common.service.MyMenuChoiceService;
 import me.sghong.manager.app.manage.dto.MenuDto;
 import me.sghong.manager.app.manage.mapper.MenuMapper;
 import me.sghong.manager.app.manage.request.MenuAddRequest;
@@ -17,7 +18,7 @@ import java.util.List;
 @Service
 public class MenuService {
     private final MenuMapper menuMapper;
-    private final MenuChoiceService menuChoiceService;
+    private final MyMenuChoiceService myMenuChoiceService;
 
     public List<MenuDto> getMenuDepth1ForUse() {
         return menuMapper.select_for_Depth1_For_Use();
@@ -131,7 +132,7 @@ public class MenuService {
         menuMapper.delete_by_menuPCode_menuCode(menuDeleteRequest.getMenuPCode(), menuDeleteRequest.getMenuCode());
 
         if (!menuDeleteRequest.getMenuPCode().equals("0000")) {
-            menuChoiceService.delete_menuChoice_By_menuCode(menuDeleteRequest.getMenuCode());
+            myMenuChoiceService.delete_menuChoice_By_menuCode(menuDeleteRequest.getMenuCode());
         }
 
         return "OK";

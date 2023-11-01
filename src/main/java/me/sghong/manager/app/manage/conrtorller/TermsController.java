@@ -1,7 +1,6 @@
 package me.sghong.manager.app.manage.conrtorller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import groovyjarjarpicocli.CommandLine;
 import lombok.RequiredArgsConstructor;
 import me.sghong.manager.app.common.dto.MessageDto;
 import me.sghong.manager.app.manage.dto.TermsSearchDto;
@@ -12,7 +11,6 @@ import me.sghong.manager.app.manage.service.TermsService;
 import me.sghong.manager.resolver.Permission;
 import me.sghong.manager.security.dto.PermissionDto;
 import me.sghong.manager.util.CommonUtil;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -92,7 +90,9 @@ public class TermsController {
                 .method(RequestMethod.GET)
                 .data(map)
                 .build();
-        return CommonUtil.shoeMessageAndRedirect(messageDto, model);        
+
+        model.addAttribute("params", messageDto);
+        return "common/messageRedirect";
     }
 
     @PostMapping("/delete")
@@ -116,6 +116,8 @@ public class TermsController {
                 .method(RequestMethod.GET)
                 .data(map)
                 .build();
-        return CommonUtil.shoeMessageAndRedirect(messageDto, model);
+
+        model.addAttribute("params", messageDto);
+        return "common/messageRedirect";
     }
 }

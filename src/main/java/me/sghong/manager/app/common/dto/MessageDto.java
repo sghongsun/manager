@@ -1,13 +1,12 @@
 package me.sghong.manager.app.common.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class MessageDto {

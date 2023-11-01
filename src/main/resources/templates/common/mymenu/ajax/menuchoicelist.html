@@ -1,0 +1,26 @@
+OK|||||
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<table class="my-menu">
+    <colgroup>
+        <col style="width:250px;" />
+        <col style="width: 50px;" />
+        <col style="width: 50px;" />
+        <col style="width: 50px;" />
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="4">즐겨찾기</th>
+    </tr>
+    </thead>
+    <tr th:if="${menuchoicelist.size() > 0}" th:each="menuchoice : ${menuchoicelist}">
+        <td><a th:href="${menuchoice.getMenuurl()}" style="color:blue" th:text="${menuchoice.getMenuname()}"></a></td>
+        <td class="ac"><a th:data-menucode="${menuchoice.getMenucode()}" th:onclick="|mod_DisNum('U', this.getAttribute('data-menucode'))|" style="cursor: pointer;">↑</a></td>
+        <td class="ac"><a th:data-menucode="${menuchoice.getMenucode()}" th:onclick="|mod_DisNum('D', this.getAttribute('data-menucode'))|" style="cursor: pointer;">↓</a></td>
+        <td class="ac"><a th:data-menucode="${menuchoice.getMenucode()}" th:onclick="del_MyMenu(this.getAttribute('data-menucode'))" style="cursor: pointer;">X</a></td>
+    </tr>
+    <tr th:unless="${menuchoicelist.size() > 0}">
+        <td colspan="4" class="ac">등록된 즐겨찾기 메뉴가 없습니다.</td>
+    </tr>
+</table>

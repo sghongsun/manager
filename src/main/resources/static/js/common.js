@@ -184,9 +184,9 @@ function SideMenuShow() {
 function add_MyMenu(menucode) {
 	$.ajax({
 		type		 : "post",
-		url			 : "/common/ajax/mymenuaddok",
+		url			 : "/common/ajax/mymenuadd",
 		async		 : false,
-		data		 : "MenuCode=" + menucode,
+		data		 : "menucode=" + menucode,
 		dataType	 : "text",
 		beforeSend: function(xhr){
 			xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
@@ -276,9 +276,9 @@ function del_MyMenu(menuCode) {
 	if (conf == true) {
 		$.ajax({
 			type		 : "post",
-			url			 : "/common/ajax/mymenudeleteok",
+			url			 : "/common/ajax/mymenudelete",
 			async		 : false,
-			data		 : "MenuCode=" + menuCode,
+			data		 : "menucode=" + menuCode,
 			dataType	 : "text",
 			beforeSend: function(xhr){
 				xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
@@ -313,9 +313,9 @@ function del_MyMenu(menuCode) {
 function mod_DisNum(udType, menuCode) {
 	$.ajax({
 		type		 : "post",
-		url			 : "/common/ajax/mymenudisplaynummodifyok",
+		url			 : "/common/ajax/mymenudisplaynummodify",
 		async		 : false,
-		data		 : "UDType=" + udType + "&MenuCode=" + menuCode,
+		data		 : "udType=" + udType + "&menucode=" + menuCode,
 		dataType	 : "text",
 		beforeSend: function(xhr){
 			xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));

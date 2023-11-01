@@ -1,22 +1,30 @@
 package me.sghong.manager.app.common.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.sghong.manager.app.common.dto.FileDto;
+import me.sghong.manager.app.common.request.MyMenuChoiceAddDeleteRequest;
+import me.sghong.manager.app.common.request.MyMenuChoiceDispNumUpdateRequest;
+import me.sghong.manager.app.common.service.MyMenuChoiceService;
 import me.sghong.manager.util.CommonUtil;
 import me.sghong.manager.util.FileUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @RequiredArgsConstructor
 @Controller
 public class CommonController {
+    private final MyMenuChoiceService myMenuChoiceService;
+
     @GetMapping("/login")
     public String login(
             Model model
@@ -36,7 +44,7 @@ public class CommonController {
         model.addAttribute("ID", I1);
         model.addAttribute("DetailFolder", DetailFolder);
 
-        return "main/editorfileupload";
+        return "common/editorfileupload";
     }
 
     @PostMapping("/common/editorfileupload")
@@ -60,5 +68,42 @@ public class CommonController {
         retVal += "parent.parent.oEditors.getById['" + request.getParameter("ID") + "'].exec('SE_TOGGLE_IMAGEUPLOAD_LAYER');";
 
         CommonUtil.AlertMessage("", retVal);
+    }
+
+    @PostMapping("/common/ajax/mymenuadd")
+    public void myMenuAddOk(
+            HttpServletResponse response,
+            @Validated MyMenuChoiceAddDeleteRequest myMenuChoiceAddDeleteRequest
+    ) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(myMenuChoiceService.insertMyMenu(myMenuChoiceAddDeleteRequest));
+    }
+
+    @PostMapping("/common/ajax/mymnulist")
+    public String myMenuList(Model model) {
+        model.addAttribute("menuchoicelist", myMenuChoiceService.getList(CommonUtil.getSession("adminid")));
+
+        return "common/mymenu/ajax/menuchoicelist";
+    }
+
+    @PostMapping("/common/ajax/mymenudisplaynummodify")
+    public void myMenuDispNumUpdate(
+            HttpServletResponse response,
+            @Validated MyMenuChoiceDispNumUpdateRequest myMenuChoiceDispNumUpdateRequest
+    ) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(myMenuChoiceService.updateMyMenuDipsNum(myMenuChoiceDispNumUpdateRequest));
+    }
+
+    @PostMapping("/common/ajax/mymenudelete")
+    public void myMenuDelete(
+            HttpServletResponse response,
+            @Validated MyMenuChoiceAddDeleteRequest myMenuChoiceAddDeleteRequest
+    ) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(myMenuChoiceService.deleteMyMenu(myMenuChoiceAddDeleteRequest));
     }
 }

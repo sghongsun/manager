@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.common.mapper.MyMenuChoiceMapper">
+    <select id="select_by_adminId" resultType="myMenuChoiceDto">
+        set session transaction isolation level read uncommitted;
+
+        select      a.menucode, a.dispnum, b.menuname, b.menuurl
+        from        admin_menu_choices as a
+        inner join  admin_menus as b on a.menucode = b.menucode
+        where       a.adminid = #{adminid}
+          and         b.menuuseflag = 'Y'
+          and         b.menuchoice = 'Y'
+        order by    a.dispnum ASC;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <delete id="delete_by_menuCode">
+        delete
+        from        admin_menu_choices
+        where       menucode = #{menuCode}
+    </delete>
+
+    <select id="select_by_adminId_menuCode_for_Count" parameterType="myMenuChoiceDto" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                        IFNULL(COUNT(idx), 0)
+        from            admin_menu_choices
+        where           adminid = #{adminid}
+        and             menucode = #{menucode};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_adminId_for_dispNum_Max" parameterType="myMenuChoiceDto" resultType="int">
+        select
+                        IFNULL(MAX(dispnum), 0) + 1
+        from            admin_menu_choices
+        where           adminid = #{adminid}
+    </select>
+
+    <insert id="insert_by_myMenu" parameterType="myMenuChoiceDto">
+        insert into admin_menu_choices (
+            menucode,
+            adminid,
+            dispnum
+        ) values (
+                     #{menucode},
+                     #{adminid},
+                     #{dispnum}
+                 )
+    </insert>
+
+    <delete id="delete_by_menucode_adminid" parameterType="myMenuChoiceDto">
+        delete
+        from        admin_menu_choices
+        where       menucode = #{menucode}
+          and         adminid = #{adminid}
+    </delete>
+
+    <select id="select_by_adminid_menucode" resultType="myMenuChoiceDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    menucode, adminid, dispnum
+        from        admin_menu_choices
+        where       adminid = #{adminid}
+        and         menucode = #{menucode};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_adminid_for_dispnum_Up" resultType="myMenuChoiceDto">
+        set session transaction isolation level read uncommitted;
+
+        select      menucode, adminid, dispnum
+        from        admin_menu_choices
+        where       adminid = #{adminid}
+        and         dispnum <![CDATA[<]]> #{dispnum}
+        order by    dispnum desc
+        limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_adminid_for_dispnum_Down" resultType="myMenuChoiceDto">
+        set session transaction isolation level read uncommitted;
+
+        select      menucode, adminid, dispnum
+        from        admin_menu_choices
+        where       adminid = #{adminid}
+        and         dispnum <![CDATA[>]]> #{dispnum}
+        order by    dispnum asc
+        limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_by_myMenu_for_dispnum_Chg" parameterType="myMenuChoiceDto">
+        update  admin_menu_choices set
+                dispnum = #{dispnum}
+        where   adminid = #{adminid}
+        and     menucode = #{menucode}
+    </update>
+
+    <update id="delete_by_myMenu_for_dispnum_Chg" parameterType="myMenuChoiceDto">
+        update  admin_menu_choices set
+                dispnum = dispnum - 1
+        where   adminid = #{adminid}
+        and     dispnum <![CDATA[>]]> #{dispnum}
+    </update>
+
+    <delete id="delete_by_myMenu" parameterType="myMenuChoiceDto">
+        delete from admin_menu_choices
+        where adminid = #{adminid}
+        and   menucode = #{menucode}
+    </delete>
+
+
+</mapper>
