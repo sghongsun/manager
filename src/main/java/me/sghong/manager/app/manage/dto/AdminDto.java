@@ -14,14 +14,17 @@ public class AdminDto {
     private String adminid;
     private String adminpwd;
     private String adminname;
-    private String groupcode;
+    private int groupcode;
     private String hp;
     private String authflag;
     private int pwderrcnt;
     private String groupname;
     private String groupwrite;
     private String groupread;
-    private LocalDateTime createdt;
     private String createid;
     private String createip;
+    private LocalDateTime createdt;
+    private String updateid;
+    private String updateip;
+    private LocalDateTime updatedt;
 }

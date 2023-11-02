@@ -1,0 +1,100 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/manage/admin/admin.js(ver=${@commonUtil.getNow()})}"></script>
+    <table class="tab_table_nl" style="margin-top:0 !important;">
+        <colgroup>
+            <col style="width:150px;">
+            <col style="width:1px;">
+            <col style="width:150px;">
+            <col style="width:auto;">
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="on "><a href="/manage/admin/list" >관리자</a></td>
+            <td></td>
+            <td class="off"><a href="/manage/admin/menuauth">메뉴별 권한 현황</a></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="tb_layout_1">
+        <form name="form" method="post" th:action="@{|/manage/admin/add|}" autocomplete="off">
+            <table>
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">아이디</span></td>
+                    <td>
+                        <input type="text" name="adminid" id="AdminID" maxlength="12" value="" class="input_text" style="width: 150px;" />
+                        <a href="javascript:chk_AdminID()" class="btn-c"><span>아이디 중복 체크</span></a> &nbsp;
+                        <span id="ID_Msg"></span>
+
+                        <input type="hidden" name="checkid" id="CheckID" />
+                        <input type="hidden" name="checkidAvailable" id="CheckIDAvailable" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">비밀번호</span></td>
+                    <td><input type="password" name="pwd" id="Pwd" maxlength="12" value="" class="input_text" style="width: 150px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">비밀번호확인</span></td>
+                    <td><input type="password" name="pwd1" id="Pwd1" maxlength="12" value="" class="input_text" style="width: 150px;" /></td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="height:15px"></div>
+
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">그룹</span></td>
+                    <td>
+                        <select name="groupcode" id="GroupCode" style="width:150px">
+                            <option th:each="group : ${groupList}" th:value="${group.getGroupcode()}" th:text="${group.getGroupname()}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">이름</span></td>
+                    <td><input type="text" name="name" id="Name" maxlength="10" value="" class="input_text" style="width: 150px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">핸드폰번호</span></td>
+                    <td>
+                        <select name="hp1" id="HP1">
+                            <option value="010">010</option>
+                            <option value="011">011</option>
+                            <option value="016">016</option>
+                            <option value="017">017</option>
+                            <option value="018">018</option>
+                            <option value="019">019</option>
+                        </select> -
+                        <input type="text" name="hp2" id="HP2" maxlength="4" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" /> -
+                        <input type="text" name="hp3" id="HP3" maxlength="4" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" />
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <div class="posR mt20">
+        <div class="ac">
+            <a href="javascript:ins_Admin();" class="btn-c"><span>입력</span></a>
+            <a href="javascript:moveList('/manage/admin/list');" class="btn-d"><span>목록</span></a>
+        </div>
+    </div>
+</div>

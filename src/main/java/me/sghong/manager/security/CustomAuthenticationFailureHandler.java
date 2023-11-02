@@ -31,7 +31,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         } else if (exception instanceof BadCredentialsException e) {
             String id = request.getParameter("mid");
 
-            AdminDto adminDto = adminService.AdminInfoForLogin(id);
+            AdminDto adminDto = adminService.getAdminInfoForGroup(id);
             int pwderrcnt = adminDto.getPwderrcnt() + 1;
 
             if (pwderrcnt <= 5) {

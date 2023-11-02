@@ -50,11 +50,11 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             MenuChoice = sb.deleteCharAt(sb.length() - 1).toString();
         }
 
-        AdminDto adminDto = adminService.AdminInfoForLogin(id);
+        AdminDto adminDto = adminService.getAdminInfoForGroup(id);
 
         CommonUtil.setSession("adminid", id);
         CommonUtil.setSession("adminname", adminDto.getAdminname());
-        CommonUtil.setSession("admingroup", adminDto.getGroupcode());
+        CommonUtil.setSession("admingroup", Integer.toString(adminDto.getGroupcode()));
         CommonUtil.setSession("menuchoice", MenuChoice);
         CommonUtil.setSession("ip", CommonUtil.getRemoteIP());
         CommonUtil.setSession("sessionid", request.getSession().getId());

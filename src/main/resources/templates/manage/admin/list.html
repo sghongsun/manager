@@ -1,0 +1,140 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/manage/admin/admin.js(ver=${@commonUtil.getNow()})}"></script>
+    <table class="tab_table_nl" style="margin-top:0 !important;">
+        <colgroup>
+            <col style="width:150px;">
+            <col style="width:1px;">
+            <col style="width:150px;">
+            <col style="width:auto;">
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="on"><a href="/manage/admin/list">관리자</a></td>
+            <td></td>
+            <td class="off"><a href="/manage/admin/menuauth">메뉴별 권한 현황</a></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form name="searchForm" id="form" method="get" action="/manage/admin/list" onsubmit="return true">
+        <input type="hidden" th:name="page" th:id="page" th:value="${searchDto.getPage()}" />
+        <div class="filterArea">
+            <div class="tb_layout_1">
+
+                <table>
+                    <colgroup>
+                        <col style="width: 150px;" />
+                        <col style="width: auto;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="title">검색조건</td>
+                        <td>
+                            <select name="groupcode" id="groupcode">
+                                <option value="">그룹선택</option>
+                                <option th:each="group : ${groupList}" th:value="${group.getGroupcode()}" th:text="${group.getGroupname()}"></option>
+                            </select>
+                            <script>
+                                $("#groupcode").val(`[[${searchDto.getGroupcode()}]]`);
+                            </script>
+                            <select name="searchtype" id="searchtype">
+                                <option value="adminname">이름</option>
+                                <option value="adminid">아이디</option>
+                            </select>
+                            <script>
+                                $("#searchtype").val("[[${searchDto.getSearchtype()}]]");
+                            </script>
+                            <input type="text" name="keyword" maxlength="50" class="input_text" th:value="${searchDto.getKeyword()}" />
+                            <a href="javascript:getSearch();" class="btn-c"><span>검색</span></a> &nbsp;
+                            <a href="javascript:location.href=location.pathname;" class="btn-d"><span>리스트</span></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </form>
+
+
+    <form name="form1" method="get" action="">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="tb_data_1">
+            <div class="tip" th:if="${searchDto.getPagination() != null}" th:text="'[전체 ' + ${#numbers.formatInteger(searchDto.getPagination().getTotalRecordCount(),0,'COMMA') + ' 건]'}"></div>
+            <div class="tip" th:if="${searchDto.getPagination() == null}" th:text="'[전체 0 건]'"></div>
+            <th:block th:if="${Permission.isWrite()}">
+                <div class="btnRight3">
+                    <a href="javascript:mod_ListAllAdmin()" class="btn-c"><span>일괄수정</span></a>
+                    <a href="/manage/admin/add" class="btn-c" style="cursor: pointer;"><span>입력</span></a>
+                </div>
+            </th:block>
+            <table>
+                <colgroup>
+                    <col style="width:   5%;" />
+                    <col style="width:  15%;" />
+                    <col style="width:  15%;" />
+                    <col style="width:  20%;" />
+                    <col style="width:  10%;" />
+                    <col style="width:  10%;" />
+                    <col style="width: auto;" />
+                    <col style="width:  10%;" />
+                </colgroup>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="All_Idx" id="All_Idx" /></th>
+                    <th>이름</th>
+                    <th>아이디</th>
+                    <th>핸드폰</th>
+                    <th>핸드폰인증</th>
+                    <th>비밀번호오류</th>
+                    <th>그룹</th>
+                    <th>수정</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="admin, loop : ${adminList.getList()}">
+                    <td>
+                        <input type="checkbox" name="AdminID" th:value="${admin.getAdminid()}" />
+                    </td>
+                    <td th:if="${Permission.isWrite()}">
+                        <a th:data-adminid="${admin.getAdminid()}" th:onclick="pop_AdminInfo(this.getAttribute('data-adminid'))" style="color:#0000ff; cursor: pointer;" th:text="${admin.getAdminname()}"></a>
+                    </td>
+                    <td th:unless="${Permission.isWrite()}" th:text="${admin.getAdminname()}"></td>
+                    <td th:text="${admin.getAdminid()}"></td>
+                    <td th:text="${admin.getHp()}"></td>
+                    <td th:text="${admin.getAuthflag()}"></td>
+                    <td th:text="${admin.getPwderrcnt()}"></td>
+                    <td>
+                        <select name="GroupCode" style="width:90%">
+                            <option th:each="group : ${groupList}" th:value="${group.getGroupcode()}" th:text="${group.getGroupname()}" th:selected="${#strings.toString(group.getGroupcode()) == admin.getGroupcode()} ? 'true' : 'false'"></option>
+                        </select>
+                    </td>
+                    <td>
+                        <a th:data-key="${loop.index}" onclick="mod_ListOneAdmin(this.getAttribute('data-key'))" class="btn-c" style="cursor: pointer;"><span>수정</span></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+    <div class="posR" th:insert="/layout/paging" th:if="${searchDto.getPagination() != null}">
+
+    </div>
+
+    <script type="text/javascript">
+        /* 전체체크박스 */
+        $("#All_Idx").click(function () {
+            if ($("#All_Idx").prop("checked")) {
+                $("input:checkbox[name='AdminID']").prop("checked", true);
+            } else {
+                $("input:checkbox[name='AdminID']").prop("checked", false);
+            }
+        });
+    </script>
+</div>

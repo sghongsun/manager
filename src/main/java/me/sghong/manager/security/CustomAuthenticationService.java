@@ -21,7 +21,7 @@ public class CustomAuthenticationService implements UserDetailsService {
             throw new UsernameNotFoundException("아이디를 입력하여 주세요.");
         }
 
-        AdminDto adminDto = adminService.AdminInfoForLogin(username);
+        AdminDto adminDto = adminService.getAdminInfoForGroup(username);
 
         if (adminDto == null) {
             throw new UsernameNotFoundException("아이디를 찾을 수 없습니다.");

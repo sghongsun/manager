@@ -4,10 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="me.sghong.manager.app.manage.mapper.AdminMapper">
-    <select id="select_by_adminId" resultType="adminDto">
+    <select id="select_by_adminId_for_group" resultType="adminDto">
         set session transaction isolation level read uncommitted;
 
-        select      a.adminid, a.adminname, a.adminpwd, a.groupcode, a.authflag, a.pwderrcnt,
+        select      a.adminid, a.adminname, a.adminpwd, a.groupcode, a.authflag, a.pwderrcnt, a.hp,
                     b.groupwrite, b.groupread
         from        admins as a
         inner join  admin_groups as b on a.groupcode = b.groupcode
@@ -58,4 +58,89 @@
         set session transaction isolation level repeatable read;
     </select>
 
+    <select id="select_by_list_for_totalCount" parameterType="adminSearchDto" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(COUNT(adminid), 0) as totalcount
+        from        admins
+        where       delflag = 'N'
+                    <include refid="admin_search" />
+        order by    createdt DESC;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_list" parameterType="adminSearchDto" resultType="adminDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    adminid, adminname, adminpwd, groupcode, hp, authflag, pwderrcnt, createdt
+        from        admins
+        where       delflag = 'N'
+                    <include refid="admin_search" />
+        order by    createdt DESC
+        LIMIT       #{pagination.limitStart}, #{recordsize};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <sql id="admin_search">
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test='searchtype.equals("adminname")'>
+                    and adminname LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test='searchtype.equals("adminid")'>
+                    and adminid LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+            </choose>
+        </if>
+        <if test='groupcode != null and groupcode != ""'>
+            and groupcode = #{groupcode}
+        </if>
+    </sql>
+
+    <select id="select_by_adminId_For_Count" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(COUNT(adminid), 0) as admincount
+        from        admins
+        where       adminid = #{adminId};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <insert id="insert_admin" parameterType="adminDto">
+        insert into admins (
+            adminid,
+            groupcode,
+            adminname,
+            adminpwd,
+            hp,
+            createid,
+            createip
+        ) values (
+                     #{adminid},
+                     #{groupcode},
+                     #{adminname},
+                     #{adminpwd},
+                     #{hp},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <select id="select_by_adminId" resultType="adminDTO">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    adminid, groupcode, adminname, hp, authflag, pwderrcnt,
+                    createid, createip, createdt, updateid, updateip, updatedt
+        from        admins
+        where       adminid = #{adminId};
+
+        set session transaction isolation level repeatable read;
+    </select>
 </mapper>

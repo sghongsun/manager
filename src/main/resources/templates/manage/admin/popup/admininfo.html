@@ -1,0 +1,144 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout_popup}">
+<div layout:fragment="content">
+    <style>
+        .tab_table_nl	 { margin-top:0 !important; }
+    </style>
+    <script type="text/javascript" th:src="@{/js/manage/admin/admin.js(ver=${@commonUtil.getNow()})}"></script>
+    <table class="tab_table_nl">
+        <colgroup>
+            <col style="width:150px;" />
+            <col style="width:1px;" />
+            <col style="width:150px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="on "><a th:href="@{|/manage/admin/popup/admininfo/${admin.getAdminid()}|}">관리자 정보</a></td>
+            <td></td>
+            <td class="off"><a th:href="@{|/manage/admin/popup/loginlist/${admin.getAdminid()}|}">로그인 정보</a></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="tb_layout_1">
+        <form name="form" id="form" method="post" th:action="|/manage/admin/adminmodify/${admin.getAdminid()}|">
+            <table>
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width:  auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">아이디</span></td>
+                    <td th:text="${admin.getAdminid()}"></td>
+                </tr>
+
+                <tr>
+                    <td class="title"><span>비밀번호 재설정</span></td>
+                    <td>
+                        <a href="javascript:lay_PasswordModifyForm()" class="btn-c"><span>비밀번호 재설정</span></a>
+                        &nbsp; 비밀번호 재설정시 비밀번호 오류 횟수 초기화 됨
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="title"><span>비밀번호 오류 횟수</span></td>
+                    <td th:text="${admin.getPwderrcnt()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="height:15px"></div>
+
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">핸드폰번호</span></td>
+                    <td>
+                        <select name="HP1" id="HP1">
+                            <option value="">선택</option>
+                            <option value="010">010</option>
+                            <option value="011">011</option>
+                            <option value="016">016</option>
+                            <option value="017">017</option>
+                            <option value="018">018</option>
+                            <option value="019">019</option>
+                        </select> -
+                        <script>
+                            $("#HP1").val(`[[${admin.getHp().split('-')[0]}]]`);
+                        </script>
+                        <input type="text" name="HP2" id="HP2" maxlength="4" th:value="${admin.getHp().split('-')[1]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" /> -
+                        <input type="text" name="HP3" id="HP3" maxlength="4" th:value="${admin.getHp().split('-')[2]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" />
+
+                        <a href="javascript:mod_AdminHP()" class="btn-c"><span>수정</span></a>
+                        &nbsp; 핸드폰번호를 수정하시면 로그인시 본인인증을 다시 하셔야 됩니다.
+
+                        <input type="hidden" name="O_HP1" th:value="${admin.getHp().split('-')[0]}" />
+                        <input type="hidden" name="O_HP2" th:value="${admin.getHp().split('-')[1]}" />
+                        <input type="hidden" name="O_HP3" th:value="${admin.getHp().split('-')[2]}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span>본인인증</span></td>
+                    <td th:if="${admin.getAuthflag() == 'Y'}" th:text="'본인인증 완료'"></td>
+                    <td th:unless="${admin.getAuthflag() == 'Y'}" th:text="'본인인증 안됨'"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="height:15px"></div>
+
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">그룹</span></td>
+                    <td>
+                        <select name="groupcode" id="GroupCode" style="width:150px">
+                            <option th:each="group : ${groupList}" th:value="${group.getGroupcode()}" th:text="${group.getGroupname()}"></option>
+                        </select>
+                        <script>
+                            $("#GroupCode").val('[[${admin.getGroupcode()}]]');
+                        </script>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">이름</span></td>
+                    <td><input type="text" name="AdminName" id="AdminName" maxlength="10" th:value="${admin.getAdminname()}" class="input_text" style="width: 150px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span>등록정보</span></td>
+                    <td th:text="${admin.getCreateid() + ' / ' + admin.getCreateip() + ' / ' + #temporals.format(admin.getCreatedt(), 'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+
+                <tr th:if="${admin.getUpdateid() != null}">
+                    <td class="title"><span>마지막수정</span></td>
+                    <td th:text="${admin.getUpdateid() + ' / ' + admin.getUpdateip() + ' / ' + #temporals.format(admin.getUpdatedt(), 'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <div class="posR mt20">
+        <div class="ac">
+        <th:block th:if="${Permission.isWrite()}">
+            <a href="javascript:mod_Admin()" class="btn-c"><span>수정</span></a>
+            <a href="javascript:del_Admin()" class="btn-c"><span>삭제</span></a>
+        </th:block>
+            <a href="javascript:self.close()" class="btn-d"><span>닫기</span></a>
+        </div>
+    </div>
+</div>

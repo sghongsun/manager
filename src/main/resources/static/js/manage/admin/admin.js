@@ -52,7 +52,7 @@ function ins_Admin() {
         return;
     }
 
-    var groupCode = alltrim($("select[name='GroupCode']").val());
+    var groupCode = alltrim($("select[name='groupcode']").val());
     if (groupCode.length === 0) {
         alert("그룹을 선택해 주십시오.");
         $("select[name='GroupCode']").focus();
@@ -124,8 +124,11 @@ function chk_AdminID() {
         type		 : "post",
         url			 : "/manage/admin/ajax/adminidduplicatecheck",
         async		 : true,
-        data		 : "AdminID=" + adminID +"&_csrf="+$('input[name="_csrf"]').val(),
+        data		 : "AdminID=" + adminID,
         dataType	 : "text",
+        beforeSend: function(xhr){
+            xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
+        },
         success		 : function (data) {
             var splitData	 = data.split("|||||");
             var result		 = splitData[0];
@@ -217,8 +220,11 @@ function mod_ListAdmin(adminID, groupCode) {
         type		 : "post",
         url			 : "/manage/admin/ajax/admingroupcodemodifyok",
         async		 : false,
-        data		 : "AdminID=" + adminID + "&GroupCode=" + groupCode + "&_csrf="+$('input[name="_csrf"]').val(),
+        data		 : "AdminID=" + adminID + "&GroupCode=" + groupCode,
         dataType	 : "text",
+        beforeSend: function(xhr){
+            xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
+        },
         success		 : function (data) {
             var splitData	 = data.split("|||||");
             var result		 = splitData[0];
@@ -257,8 +263,11 @@ function lay_PasswordModifyForm() {
         type		 : "post",
         url			 : "/manage/admin/ajax/adminpwdmodify",
         async		 : false,
-        data		 : "AdminID=" + adminID + "&_csrf="+$('input[name="_csrf"]').val(),
+        data		 : "AdminID=" + adminID,
         dataType	 : "text",
+        beforeSend: function(xhr){
+            xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
+        },
         success		 : function (data) {
             var splitData	 = data.split("|||||");
             var result		 = splitData[0];
@@ -510,9 +519,12 @@ function lay_MyPasswordModifyForm() {
     $.ajax({
         type		 : "post",
         url			 : "/manage/admin/ajax/mypasswordmodify",
-        data		 : "_csrf="+$('input[name="_csrf"]').val(),
+        data		 : "",
         async		 : false,
         dataType	 : "text",
+        beforeSend: function(xhr){
+            xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
+        },
         success		 : function (data) {
             var splitData	 = data.split("|||||");
             var result		 = splitData[0];
