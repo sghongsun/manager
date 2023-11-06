@@ -1,5 +1,6 @@
 package me.sghong.manager.app.manage.conrtorller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.sghong.manager.app.manage.dto.MenuDto;
 import me.sghong.manager.app.manage.request.MenuAddRequest;
@@ -13,12 +14,10 @@ import me.sghong.manager.util.CommonUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -124,4 +123,24 @@ public class MenuController {
         }
     }
 
+    @GetMapping("/ajax/getmcode2list")
+    public void menuDepth2List(
+            HttpServletResponse response,
+            @RequestParam("MCode1") String MCode1
+    ) throws IOException {
+        List<MenuDto> menuDtoList = menuService.getMenuDepth2ForUse(MCode1);
+        StringBuilder MCode = new StringBuilder();
+        StringBuilder MName = new StringBuilder();
+
+        for (MenuDto key : menuDtoList) {
+            MCode.append(key.getMenucode()).append(",");
+            MName.append(key.getMenuname()).append(",");
+        }
+
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("OK|||||"+MCode.deleteCharAt(MCode.length()-1).toString()+"|||||"+MName.deleteCharAt(MName.length()-1).toString());
+
+        out.flush();
+    }
 }

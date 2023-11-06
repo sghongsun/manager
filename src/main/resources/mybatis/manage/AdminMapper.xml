@@ -143,4 +143,108 @@
 
         set session transaction isolation level repeatable read;
     </select>
+
+    <update id="update_admin_for_groupcode" parameterType="adminDto">
+        update admins set
+                          groupcode = #{groupcode},
+                          updateid = #{createid},
+                          updateip = #{createip},
+                          updatedt = now()
+        where adminid = #{adminid}
+    </update>
+
+    <update id="update_adminpwd" parameterType="adminDto">
+        update admins set
+                          adminpwd = #{adminpwd},
+                          updateid = #{createid},
+                          updateip = #{createip},
+                          updatedt = now()
+        where adminid = #{adminid}
+    </update>
+
+    <update id="update_adminhp" parameterType="adminDto">
+        update admins set
+                          hp = #{hp},
+                          sdupinfo = '',
+                          authflag = 'N',
+                          authdate = null,
+                          updateid = #{createid},
+                          updateip = #{createip},
+                          updatedt = now()
+        where adminid = #{adminid}
+    </update>
+
+    <update id="update_admininfo" parameterType="adminDto">
+        update admins set
+                          groupcode = #{groupcode},
+                          adminname = #{adminname},
+                          updateid = #{createid},
+                          updateip = #{createip},
+                          updatedt = now()
+        where adminid = #{adminid}
+    </update>
+
+    <update id="delete_admin" parameterType="adminDto">
+        update admins set
+                          delflag = 'Y',
+                          updateid = #{createid},
+                          updateip = #{createip},
+                          updatedt = now()
+        where adminid = #{adminid}
+    </update>
+
+    <select id="select_by_admin_login_for_totalCount" parameterType="adminSearchDto" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(COUNT(idx), 0) as totalcount
+        from        admin_logins
+                    <include refid="select_by_admin_login_search" />
+        ;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_admin_login_list" parameterType="adminSearchDto" resultType="adminLoginDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    adminid, ip, logindt
+        from        admin_logins
+                    <include refid="select_by_admin_login_search" />
+        order by    idx desc
+        limit       #{pagination.limitStart}, #{recordsize};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <sql id="select_by_admin_login_search">
+        <if test="keyword != null and keyword != ''">
+            where adminid = #{keyword}
+        </if>
+    </sql>
+
+    <select id="select_by_list_for_group_search" resultType="adminDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    a.adminid, a.adminname, a.hp, a.createdt, b.groupname
+        from        admins as a
+        inner join  admin_groups as b on a.groupcode = b.groupcode
+        where       a.groupcode != '1000'
+        and         a.delflag = 'N'
+        <choose>
+            <when test='authType.equals("R")'>
+                and b.groupread LIKE CONCAT('%', #{mCode2}, '%')
+            </when>
+            <otherwise>
+                and b.groupwrite LIKE CONCAT('%', #{mCode2}, '%')
+            </otherwise>
+        </choose>
+        ;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+
 </mapper>

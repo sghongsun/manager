@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <style>
+        .tb_data_1 {margin-top:0 !important;}
+        .line2 th:first-child{border-left: 1px solid #d8d8d8 !important;}
+    </style>
+    <script type="text/javascript" th:src="@{/js/manage/admin/admin.js(ver=${@commonUtil.getNow()})}"></script>
+    <table class="tab_table_nl" style="margin-top:0 !important;">
+        <colgroup>
+            <col style="width:150px;">
+            <col style="width:1px;">
+            <col style="width:150px;">
+            <col style="width:auto;">
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="off"><a href="/manage/admin/list">관리자</a></td>
+            <td></td>
+            <td class="on"><a href="/manage/admin/menuauth">메뉴별 권한 현황</a></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="tb_data_1">
+        <table class="ga">
+            <colgroup>
+                <col style="width:  20%;" />
+                <col style="width:  20%;" />
+                <col style="width:  15%;" />
+                <col style="width:  15%;" />
+                <col style="width:  15%;" />
+                <col style="width:  15%;" />
+            </colgroup>
+            <thead>
+            <tr>
+                <th rowspan="2">대분류</th>
+                <th rowspan="2">소분류</th>
+                <th colspan="2">읽기권한</th>
+                <th colspan="2">쓰기권한</th>
+            </tr>
+            <tr class="line2">
+                <th>그룹수</th>
+                <th>관리자수</th>
+                <th>그룹수</th>
+                <th>관리자수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="menuauth, loop : ${menuAuthList}">
+                <tr>
+                    <td th:text="${menuauth.getMenuname1()}"></td>
+                    <td th:text="${menuauth.getMenuname2()}"></td>
+                    <td><a th:data-menucode1="${menuauth.getMenucode1()}"
+                           th:data-menucode2="${menuauth.getMenucode2()}"
+                           th:onclick="|pop_Info(this.getAttribute('data-menucode1'), this.getAttribute('data-menucode2'), 'R', 'G')|"
+                           th:text="${menuauth.getReadgroupcount()}"
+                           style="color:blue; cursor: pointer;"></a></td>
+                    <td><a th:data-menucode1="${menuauth.getMenucode1()}"
+                           th:data-menucode2="${menuauth.getMenucode2()}"
+                           th:onclick="|pop_Info(this.getAttribute('data-menucode1'), this.getAttribute('data-menucode2'), 'R', 'A')|"
+                           th:text="${menuauth.getReadusercount()}"
+                           style="color:blue; cursor: pointer;"></a></td>
+                    <td><a th:data-menucode1="${menuauth.getMenucode1()}"
+                           th:data-menucode2="${menuauth.getMenucode2()}"
+                           th:onclick="|pop_Info(this.getAttribute('data-menucode1'), this.getAttribute('data-menucode2'), 'W', 'G')|"
+                           th:text="${menuauth.getWritegroupcount()}"
+                           style="color:blue; cursor: pointer;"></a></td>
+                    <td><a th:data-menucode1="${menuauth.getMenucode1()}"
+                           th:data-menucode2="${menuauth.getMenucode2()}"
+                           th:onclick="|pop_Info(this.getAttribute('data-menucode1'), this.getAttribute('data-menucode2'), 'W', 'A')|"
+                           th:text="${menuauth.getWriteusercount()}"
+                           style="color:blue; cursor: pointer;"></a></td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>

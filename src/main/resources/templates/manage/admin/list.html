@@ -111,7 +111,7 @@
                     <td th:text="${admin.getPwderrcnt()}"></td>
                     <td>
                         <select name="GroupCode" style="width:90%">
-                            <option th:each="group : ${groupList}" th:value="${group.getGroupcode()}" th:text="${group.getGroupname()}" th:selected="${#strings.toString(group.getGroupcode()) == admin.getGroupcode()} ? 'true' : 'false'"></option>
+                            <option th:each="group : ${groupList}" th:value="${group.getGroupcode()}" th:text="${group.getGroupname()}" th:selected="${group.getGroupcode() == admin.getGroupcode()} ? 'true' : 'false'"></option>
                         </select>
                     </td>
                     <td>

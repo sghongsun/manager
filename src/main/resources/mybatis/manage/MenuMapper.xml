@@ -185,4 +185,21 @@
         and         menucode = #{menuCode}
     </update>
 
+    <select id="select_by_list_for_menuauth" resultType="menuAuthDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    menucode as menucode2, menupcode as menucode1, menuname as menuname2,
+                    (select menuname from admin_menus as t where admin_menus.menupcode = t.menucode and t.menupcode = '0000') as menuname1,
+                    (select IFNULL(COUNT(groupcode), 0) from admin_groups where groupread LIKE CONCAT('%', admin_menus.menucode, '%') and groupcode != '1000') as readgroupcount,
+                    (select IFNULL(COUNT(groupcode), 0) from admin_groups where groupwrite LIKE CONCAT('%', admin_menus.menucode, '%') and groupcode != '1000') as writegroupcount,
+                    (select IFNULL(COUNT(adminid), 0) from admins as a inner join admin_groups as b on a.groupcode = b.groupcode where b.groupread LIKE CONCAT('%', admin_menus.menucode, '%') and a.delflag = 'N' and a.groupcode != '1000') as readusercount,
+                    (select IFNULL(COUNT(adminid), 0) from admins as a inner join admin_groups as b on a.groupcode = b.groupcode where b.groupwrite LIKE CONCAT('%', admin_menus.menucode, '%') and a.delflag = 'N' and a.groupcode != '1000') as writeusercount
+        from        admin_menus
+        where       menupcode != '0000'
+        order by    menupcode asc, menudispnum asc, menucode asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
 </mapper>

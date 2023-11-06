@@ -1,6 +1,7 @@
 package me.sghong.manager.app.manage.mapper;
 
 import lombok.RequiredArgsConstructor;
+import me.sghong.manager.app.manage.dto.MenuAuthDto;
 import me.sghong.manager.app.manage.dto.MenuDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -24,4 +25,5 @@ public interface MenuMapper {
     MenuDto select_by_menuPCode_menuCode_For_DisplayNum_Up(String menuPCode, int displayNum);
     MenuDto select_by_menuPCode_menuCode_For_DisplayNum_Down(String menuPCode, int displayNum);
     void modify_by_menuDisplayNum(String menuPCode, String menuCode, int displayNum);
+    List<MenuAuthDto> select_by_list_for_menuauth();
 }

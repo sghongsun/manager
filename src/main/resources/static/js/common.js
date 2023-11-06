@@ -11,7 +11,7 @@ function chg_MCode1(pageUrl) {
 	if (mCode1 != "") {
 		$.ajax({
 			type		 : "get",
-			url			 : "/manage/menu/ajax/GetMCode2List",
+			url			 : "/manage/menu/ajax/getmcode2list",
 			async		 : false,
 			data		 : "PageUrl=" + pageUrl + "&MCode1=" + mCode1,
 			dataType	 : "text",

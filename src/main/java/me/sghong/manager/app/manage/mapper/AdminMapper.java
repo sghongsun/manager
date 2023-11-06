@@ -1,6 +1,7 @@
 package me.sghong.manager.app.manage.mapper;
 
 import me.sghong.manager.app.manage.dto.AdminDto;
+import me.sghong.manager.app.manage.dto.AdminLoginDto;
 import me.sghong.manager.app.manage.dto.AdminSearchDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -18,6 +19,13 @@ public interface AdminMapper {
     List<AdminDto> select_by_list(AdminSearchDto adminSearchDto);
     int select_by_adminId_For_Count(String adminId);
     void insert_admin(AdminDto adminDto);
-
+    void update_admin_for_groupcode(AdminDto adminDto);
+    void update_adminpwd(AdminDto adminDto);
+    void update_adminhp(AdminDto adminDto);
+    void update_admininfo(AdminDto adminDto);
+    void delete_admin(AdminDto adminDto);
+    int select_by_admin_login_for_totalCount(AdminSearchDto adminSearchDto);
+    List<AdminLoginDto> select_by_admin_login_list(AdminSearchDto adminSearchDto);
+    List<AdminDto> select_by_list_for_group_search(String mCode2, String authType);
 
 }

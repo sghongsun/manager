@@ -14,5 +14,6 @@ public interface AdminGroupMapper {
     void insert_admingroup(AdminGroupDto adminGroupDto);
     void update_admingroup(AdminGroupDto adminGroupDto);
     void delete_admingroup(int groupCode);
+    List<AdminGroupDto> select_by_list_for_adminlist_group_search(String mCode2, String authType);
 
 }

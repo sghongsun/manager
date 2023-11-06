@@ -41,7 +41,7 @@
 
     <form name="form1" method="get" action="">
         <div class="tb_data_1">
-            <div class="tip" th:if="${searchDto.getPagination() != null}" th:text="'[전체 ' + ${#numbers.formatInteger(searchDto.getPagination().getTotalRecordCount(),0,'COMMA') + ' 건]'}"></div>
+            <div class="tip" th:if="${searchDto.getPagination() != null}" th:text="'[전체 ' + ${#numbers.formatInteger(searchDto.getPagination().getTotalRecordCount(), 0, 'COMMA') + ' 건]'}"></div>
             <div class="tip" th:if="${searchDto.getPagination() == null}" th:text="'[전체 0 건]'"></div>
             <th:block th:if="${Permission.isWrite()}">
                 <div class="btnRight3">

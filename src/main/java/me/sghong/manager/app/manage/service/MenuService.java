@@ -2,6 +2,7 @@ package me.sghong.manager.app.manage.service;
 
 import lombok.RequiredArgsConstructor;
 import me.sghong.manager.app.common.service.MyMenuChoiceService;
+import me.sghong.manager.app.manage.dto.MenuAuthDto;
 import me.sghong.manager.app.manage.dto.MenuDto;
 import me.sghong.manager.app.manage.mapper.MenuMapper;
 import me.sghong.manager.app.manage.request.MenuAddRequest;
@@ -183,5 +184,9 @@ public class MenuService {
         }
 
         return retVal;
+    }
+
+    public List<MenuAuthDto> getMenuAuthList() {
+        return menuMapper.select_by_list_for_menuauth();
     }
 }

@@ -1,0 +1,102 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout_popup}">
+<div layout:fragment="content">
+    <style>
+        .tab_table_nl	 { margin-top:0 !important; }
+    </style>
+    <script type="text/javascript" th:src="@{/js/manage/admin/admin.js(ver=${@commonUtil.getNow()})}"></script>
+    <table class="tab_table_nl">
+        <colgroup>
+            <col style="width:150px;" />
+            <col style="width:1px;" />
+            <col style="width:150px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="on "><a th:href="|/manage/admin/popup/authgrouplist?MCode1=${mCode1}&MCode2=${mCode2}&authType=${authType}|">메뉴권한 그룹</a></td>
+            <td></td>
+            <td class="off"><a th:href="|/manage/admin/popup/authadminlist?MCode1=${mCode1}&MCode2=${mCode2}&authType=${authType}|">메뉴권한 관리자</a></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form name="form" method="get" action="/manage/admin/popup/authgrouplist" onsubmit="return true" autocomplete="off">
+        <div class="filterArea">
+            <div class="tb_layout_1">
+
+                <table>
+                    <colgroup>
+                        <col style="width: 150px;" />
+                        <col style="width: auto;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="title">분류</td>
+                        <td colspan="3">
+                            <select name="MCode1" id="MCode1" class="input_text" onchange="chg_MCode1('AdminList')">
+                                <option th:each="menuDepth1 : ${menuDepth1List}" th:value="${menuDepth1.getMenucode()}" th:text="${menuDepth1.getMenuname()}"></option>
+                            </select>
+                            <script type="text/javascript">
+                                $("#MCode1").val(`[[${mCode1}]]`);
+                            </script>
+
+                            <select name="MCode2" id="MCode2" class="input_text">
+                                <option th:each="menuDepth2 : ${menuDepth2List}" th:value="${menuDepth2.getMenucode()}" th:text="${menuDepth2.getMenuname()}"></option>
+                            </select>
+                            <script type="text/javascript">
+                                $("#MCode2").val(`[[${mCode2}]]`);
+                            </script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="title">검색조건</td>
+                        <td>
+                            <label><span style="display:inline-block; width:110px;"><input type="radio" name="authType" value="R" th:checked="${authType == 'R' ? 'true' : 'false'}" />읽기</span></label>
+                            <label><span style="display:inline-block; width:110px;"><input type="radio" name="authType" value="W" th:checked="${authType == 'W' ? 'true' : 'false'}" />쓰기</span></label>
+                            <a href="javascript:document.form.submit()" class="btn-c"><span>검색</span></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </form>
+
+    <div class="tb_data_1">
+        <div class="tip"></div>
+        <div class="btnRight3" th:if="groupList == null" th:text="|[전체 0 건]|"></div>
+        <div class="btnRight3" th:unless="groupList == null" th:text="|[전체 ${#numbers.formatInteger(groupList.size(), 0, 'COMMA')}건]|"></div>
+        <table>
+            <colgroup>
+                <col style="width:  10%;" />
+                <col style="width:  20%;" />
+                <col style="width: auto;" />
+                <col style="width:  15%;" />
+                <col style="width:  20%;" />
+            </colgroup>
+            <thead>
+            <tr>
+                <th>No.</th>
+                <th>그룹명</th>
+                <th>그룹설명</th>
+                <th>관리자수</th>
+                <th>등록일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="group, loop : ${groupList}">
+                <td th:text="${loop.index + 1}"></td>
+                <td th:text="${group.getGroupname()}"></td>
+                <td th:text="${group.getGroupdesc()}"></td>
+                <td th:text="${group.getAdmincnt()}"></td>
+                <td th:text="${#temporals.format(group.getCreatedt(), 'yyyy-MM-dd')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

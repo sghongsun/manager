@@ -16,16 +16,17 @@
         </colgroup>
         <tbody>
         <tr>
-            <td class="on "><a th:href="@{|/manage/admin/popup/admininfo/${admin.getAdminid()}|}">관리자 정보</a></td>
+            <td class="on "><a th:href="|/manage/admin/popup/admininfo/${admin.getAdminid()}|">관리자 정보</a></td>
             <td></td>
-            <td class="off"><a th:href="@{|/manage/admin/popup/loginlist/${admin.getAdminid()}|}">로그인 정보</a></td>
+            <td class="off"><a th:href="|/manage/admin/popup/loginlist/${admin.getAdminid()}|">로그인 정보</a></td>
             <td></td>
         </tr>
         </tbody>
     </table>
 
     <div class="tb_layout_1">
-        <form name="form" id="form" method="post" th:action="|/manage/admin/adminmodify/${admin.getAdminid()}|">
+        <form name="form" id="form" method="post" th:action="|/manage/admin/adminmodify/|">
+            <input type="hidden" name="adminid" th:value="${admin.getAdminid()}"/>
             <table>
                 <colgroup>
                     <col style="width: 150px;" />
@@ -63,7 +64,7 @@
                 <tr>
                     <td class="title"><span class="required">핸드폰번호</span></td>
                     <td>
-                        <select name="HP1" id="HP1">
+                        <select name="hp1" id="HP1">
                             <option value="">선택</option>
                             <option value="010">010</option>
                             <option value="011">011</option>
@@ -75,8 +76,8 @@
                         <script>
                             $("#HP1").val(`[[${admin.getHp().split('-')[0]}]]`);
                         </script>
-                        <input type="text" name="HP2" id="HP2" maxlength="4" th:value="${admin.getHp().split('-')[1]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" /> -
-                        <input type="text" name="HP3" id="HP3" maxlength="4" th:value="${admin.getHp().split('-')[2]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" />
+                        <input type="text" name="hp2" id="HP2" maxlength="4" th:value="${admin.getHp().split('-')[1]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" /> -
+                        <input type="text" name="hp3" id="HP3" maxlength="4" th:value="${admin.getHp().split('-')[2]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" />
 
                         <a href="javascript:mod_AdminHP()" class="btn-c"><span>수정</span></a>
                         &nbsp; 핸드폰번호를 수정하시면 로그인시 본인인증을 다시 하셔야 됩니다.
@@ -115,7 +116,7 @@
                 </tr>
                 <tr>
                     <td class="title"><span class="required">이름</span></td>
-                    <td><input type="text" name="AdminName" id="AdminName" maxlength="10" th:value="${admin.getAdminname()}" class="input_text" style="width: 150px;" /></td>
+                    <td><input type="text" name="name" id="AdminName" maxlength="10" th:value="${admin.getAdminname()}" class="input_text" style="width: 150px;" /></td>
                 </tr>
                 <tr>
                     <td class="title"><span>등록정보</span></td>

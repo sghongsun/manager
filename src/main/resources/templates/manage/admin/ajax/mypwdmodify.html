@@ -1,0 +1,59 @@
+OK|||||
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div style="width:600px; padding:20px;">
+
+    <form name="chgPwdForm" id="chgPwdForm" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="AdminID"	th:value="${adminid}" />
+
+        <div>
+            <table style="width:100%">
+                <tr>
+                    <td class="left">
+                        <img src="/images/bu_title.gif" style="vertical-align:middle" alt="icon" /> <strong>비밀번호 변경</strong>
+                    </td>
+                    <td class="ar">
+                        <a href="javascript:closePop('popup')"><img src="/Images/img_pop_close.gif" style="width:14px;height:14px" alt="close" /></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="pContents" class="tb_layout_1" style="margin-top:0 !important; margin-bottom:30px !important;">
+            <table>
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: 450px;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span>아이디</span></td>
+                    <td class="al pl20" th:text="${adminid}"></td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">기존비밀번호</span></td>
+                    <td class="al pl20"><input type="password" name="PrevPwd" id="PrevPwd" maxlength="12" value="" class="input_text" style="width: 150px;" onclick="this.focus();" /></td>
+                </tr>                <tr>
+                    <td class="title"><span class="required">비밀번호</span></td>
+                    <td class="al pl20"><input type="password" name="Pwd" id="Pwd" maxlength="12" value="" class="input_text" style="width: 150px;" onclick="this.focus();" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">비밀번호 확인</span></td>
+                    <td class="al pl20"><input type="password" name="Pwd1" id="Pwd1" maxlength="12" value="" class="input_text" style="width: 150px;" onclick="this.focus();" /></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="posR mt20">
+            <div class="ac">
+                <a href="javascript:lay_MyPasswordModify()" class="btn-c"><span>수정</span></a>
+                <a href="javascript:closePop('popup')" class="btn-d"><span>닫기</span></a>
+            </div>
+        </div>
+
+    </form>
+
+</div>

@@ -1,0 +1,64 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout_popup}">
+<div layout:fragment="content">
+    <style>
+        .tab_table_nl	 { margin-top:0 !important; }
+        .tb_data_1		 { margin-top:0 !important; }
+    </style>
+    <script type="text/javascript" th:src="@{/js/manage/admin/admin.js(ver=${@commonUtil.getNow()})}"></script>
+    <table class="tab_table_nl">
+        <colgroup>
+            <col style="width:150px;" />
+            <col style="width:1px;" />
+            <col style="width:150px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="off"><a th:href="|/manage/admin/popup/admininfo/${adminId}|">관리자 정보</a></td>
+            <td></td>
+            <td class="on"><a th:href="|/manage/admin/popup/loginlist/${adminId}|">로그인 정보</a></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form name="searchForm" id="searchForm" method="get">
+        <input type="hidden" name="keyword" th:value="${adminId}" />
+        <input type="hidden" name="page" id="page" th:value="${searchDto.getPage()}" />
+    </form>
+    <div class="tb_data_1">
+        <div class="tip"></div>
+        <div class="btnRight3" th:if="${searchDto.getPagination() != null}" th:text="'[전체 ' + ${#numbers.formatInteger(searchDto.getPagination().getTotalRecordCount(), 0, 'COMMA') + ' 건]'}"></div>
+        <div class="btnRight3" th:if="${searchDto.getPagination() == null}" th:text="'[전체 0 건]'"></div>
+        <table>
+            <colgroup>
+                <col style="width:  10%;" />
+                <col style="width:  25%;" />
+                <col style="width:  25%;" />
+                <col style="width: auto;" />
+            </colgroup>
+            <thead>
+            <tr>
+                <th>No.</th>
+                <th>아이디</th>
+                <th>아이피</th>
+                <th>일자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="list, loop : ${loginList.getList()}">
+                <td th:text="${searchDto.getPagination().getTotalRecordCount()-((searchDto.getPage()-1) * searchDto.getRecordsize())-loop.index}"></td>
+                <td th:text="${list.getAdminid()}"></td>
+                <td th:text="${list.getIp()}"></td>
+                <td th:text="${#temporals.format(list.getLogindt(), 'yyyy-MM-dd HH:mm:ss')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="posR" th:insert="/layout/paging" th:if="${searchDto.getPagination() != null}">
+    </div>
+</div>

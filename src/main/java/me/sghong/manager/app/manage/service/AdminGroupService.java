@@ -113,4 +113,8 @@ public class AdminGroupService {
     public void deleteAdminGroup(int groupCode) {
         adminGroupMapper.delete_admingroup(groupCode);
     }
+
+    public List<AdminGroupDto> getListForAdminList(String mCode2, String authType) {
+        return adminGroupMapper.select_by_list_for_adminlist_group_search(mCode2, authType);
+    }
 }

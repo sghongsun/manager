@@ -1,0 +1,90 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/manage/admin/admin.js(ver=${@commonUtil.getNow()})}"></script>
+    <div class="tb_layout_1">
+        <form name="form" method="post" action="">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" name="adminid" th:value="${admin.getAdminid()}"/>
+            <table>
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title">아이디</td>
+                    <td th:text="${admin.getAdminid()}"></td>
+                </tr>
+                <tr>
+                    <td class="title">이름</td>
+                    <td th:text="${admin.getAdminname()}"></td>
+                </tr>
+                <tr>
+                    <td class="title"><span>그룹</span></td>
+                    <td th:text="${groupname}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="height:15px"></div>
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span>비밀번호 재설정</span></td>
+                    <td>
+                        <a href="javascript:lay_MyPasswordModifyForm()" class="btn-c"><span>비밀번호 재설정</span></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="height:15px"></div>
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">핸드폰번호</span></td>
+                    <td>
+                        <select name="hp1" id="HP1">
+                            <option value="">선택</option>
+                            <option value="010">010</option>
+                            <option value="011">011</option>
+                            <option value="016">016</option>
+                            <option value="017">017</option>
+                            <option value="018">018</option>
+                            <option value="019">019</option>
+                        </select> -
+                        <script>
+                            $("#HP1").val("[[${admin.getHp().split('-')[0]}]]");
+                        </script>
+                        <input type="text" name="hp2" id="HP2" maxlength="4" th:value="${admin.getHp().split('-')[1]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" /> -
+                        <input type="text" name="hp3" id="HP3" maxlength="4" th:value="${admin.getHp().split('-')[2]}" class="input_text" onkeydown="fn_numbersonly(event)" style="width: 60px;" />
+
+
+
+                        <a href="javascript:mod_MyHP()" class="btn-c"><span>본인인증 수정</span></a>
+                        &nbsp; 수정할 핸드폰번호를 입력 후 본인인증 수정 버튼을 클릭하여 본인인증을 해 주십시오.
+
+
+                        <input type="hidden" name="O_HP1" th:value="${admin.getHp().split('-')[0]}" />
+                        <input type="hidden" name="O_HP2" th:value="${admin.getHp().split('-')[1]}" />
+                        <input type="hidden" name="O_HP3" th:value="${admin.getHp().split('-')[2]}" />
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

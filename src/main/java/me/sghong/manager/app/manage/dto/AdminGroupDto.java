@@ -3,6 +3,8 @@ package me.sghong.manager.app.manage.dto;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
+import java.time.LocalDateTime;
+
 @Alias("adminGroupDto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,4 +19,5 @@ public class AdminGroupDto {
     private int admincnt;
     private String createid;
     private String createip;
+    private LocalDateTime createdt;
 }

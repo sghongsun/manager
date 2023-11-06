@@ -218,9 +218,9 @@ function mod_ListAdmin(adminID, groupCode) {
 
     $.ajax({
         type		 : "post",
-        url			 : "/manage/admin/ajax/admingroupcodemodifyok",
+        url			 : "/manage/admin/ajax/admingroupcodemodify",
         async		 : false,
-        data		 : "AdminID=" + adminID + "&GroupCode=" + groupCode,
+        data		 : "adminid=" + adminID + "&groupcode=" + groupCode,
         dataType	 : "text",
         beforeSend: function(xhr){
             xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
@@ -258,12 +258,12 @@ function pop_AdminInfo(adminID) {
 
 /* 관리자 비밀번호 수정 폼 */
 function lay_PasswordModifyForm() {
-    adminID = $('input[name="AdminID"]').val();
+    adminID = $('input[name="adminid"]').val();
     $.ajax({
         type		 : "post",
-        url			 : "/manage/admin/ajax/adminpwdmodify",
+        url			 : "/manage/admin/ajax/adminpwdmodify/"+adminID,
         async		 : false,
-        data		 : "AdminID=" + adminID,
+        data		 : "",
         dataType	 : "text",
         beforeSend: function(xhr){
             xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
@@ -329,7 +329,7 @@ function lay_PasswordModify() {
     if (conf === true) {
         $.ajax({
             type		 : "post",
-            url			 : "/manage/admin/ajax/adminpwdmodifyok",
+            url			 : "/manage/admin/ajax/adminpwdmodify",
             async		 : false,
             data		 : $("#chgPwdForm").serialize(),
             dataType	 : "text",
@@ -408,7 +408,7 @@ function mod_AdminHP() {
     var conf = confirm("수정 하시겠습니까?");
     if (conf === true) {
         openPop('loading');
-        document.form.action = "/manage/admin/adminhpmodifyok";
+        document.form.action = "/manage/admin/adminhpmodify";
         document.form.submit();
     }
 }
@@ -416,10 +416,10 @@ function mod_AdminHP() {
 
 /* 관리자 수정 폼 체크 */
 function mod_Admin() {
-    var groupCode = alltrim($("select[name='GroupCode']").val());
+    var groupCode = alltrim($("select[name='groupcode']").val());
     if (groupCode.length === 0) {
         alert("그룹을 선택해 주십시오.");
-        $("select[name='GroupCode']").focus();
+        $("select[name='groupcode']").focus();
         return;
     }
 
@@ -434,7 +434,7 @@ function mod_Admin() {
     var conf = confirm("수정 하시겠습니까?");
     if (conf === true) {
         openPop('loading');
-        document.form.action = "/manage/admin/adminmodifyok";
+        document.form.action = "/manage/admin/adminmodify";
         document.form.submit();
     }
 }
@@ -445,7 +445,7 @@ function del_Admin(adminID) {
     var conf = confirm("삭제 하시겠습니까?");
     if (conf == true) {
         openPop('loading');
-        document.form.action = "/manage/admin/admindelok";
+        document.form.action = "/manage/admin/admindelete";
         document.form.submit();
     }
 }
@@ -506,7 +506,7 @@ function mod_MyHP() {
 
     var hp = hp1 + '-' + hp2 + '-' + hp3;
 
-    document.form.action="/manage/admin/myinfohpmodifyok";
+    document.form.action="/manage/myinfo/myinfohpmodify";
     document.form.submit();
     //window.open('/ASP/Login/Auth/NiceID_Main.asp?AuthFor=M&HP=' + hp, 'cert', 'width=450, height=550, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no').focus();
 }
@@ -518,7 +518,7 @@ function mod_MyHP() {
 function lay_MyPasswordModifyForm() {
     $.ajax({
         type		 : "post",
-        url			 : "/manage/admin/ajax/mypasswordmodify",
+        url			 : "/manage/myinfo/ajax/mypasswordmodify",
         data		 : "",
         async		 : false,
         dataType	 : "text",

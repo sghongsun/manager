@@ -82,20 +82,20 @@
         delete from admin_groups where groupcode = #{groupcode}
     </delete>
 
-    <select id="select_by_list_for_adminList" parameterType="Map" resultType="Map">
+    <select id="select_by_list_for_adminlist_group_search" resultType="adminGroupDto">
         set session transaction isolation level read uncommitted;
 
         select
                     groupcode, groupname, groupdesc, createdt,
-                    (select IFNULL(COUNT(adminid), 0) from admins where groupcode = admin_groups.groupcode and delflag = 'N') as admincount
+                    (select IFNULL(COUNT(adminid), 0) from admins where groupcode = admin_groups.groupcode and delflag = 'N') as admincnt
         from        admin_groups
         where       groupcode != '1000'
         <choose>
-            <when test='authtype.equals("R")'>
-                and groupread LIKE CONCAT('%', #{mcode2}, '%')
+            <when test='authType.equals("R")'>
+                and groupread LIKE CONCAT('%', #{mCode2}, '%')
             </when>
             <otherwise>
-                and groupwrite LIKE CONCAT('%', #{mcode2}, '%')
+                and groupwrite LIKE CONCAT('%', #{mCode2}, '%')
             </otherwise>
         </choose>
         ;
