@@ -1,0 +1,173 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script type="text/javascript" th:src="@{/js/manage/shopinfo/shopinfo.js(ver=${@commonUtil.getNow()})}"></script>
+    <div class="tb_layout_1">
+        <form name="form" method="post" th:action="|/manage/shopinfo/modify|" autocomplete="off">
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span>배송비정책</span></td>
+                    <td style="line-height:30px;">
+                        <span style="display:inline-block; width:650px;">
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">배송비기준</span> :
+                            <input type="text" name="standardprice" id="StandardPrice" maxlength="8" th:value="${shopinfo.getStandardprice()}" class="input_text" style="width: 100px;" />원 미만시 배송비
+                            <input type="text" name="deliveryprice" id="DeliveryPrice" maxlength="5" th:value="${shopinfo.getDeliveryprice()}" class="input_text" style="width: 100px;" />원 부과
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">반품배송비</span> :
+                            <input type="text" name="returndeliveryprice" id="ReturnDeliveryPrice" maxlength="5" th:value="${shopinfo.getReturndeliveryprice()}" class="input_text" style="width: 100px;" />원
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">교환배송비</span> :
+                            <input type="text" name="changedeliveryprice" id="ChangeDeliveryPrice" maxlength="5" th:value="${shopinfo.getChangedeliveryprice()}" class="input_text" style="width: 100px;" />원
+                            <br />
+
+                            <input type="hidden" name="O_StandardPrice" id="O_StandardPrice" th:value="${shopinfo.getStandardprice()}" />
+                            <input type="hidden" name="O_DeliveryPrice" id="O_DeliveryPrice" th:value="${shopinfo.getDeliveryprice()}" />
+                            <input type="hidden" name="O_ReturnDeliveryPrice" id="O_ReturnDeliveryPrice" th:value="${shopinfo.getReturndeliveryprice()}" />
+                            <input type="hidden" name="O_ChangeDeliveryPrice" id="O_ChangeDeliveryPrice" th:value="${shopinfo.getChangedeliveryprice()}" />
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span>해외 배송비정책</span></td>
+                    <td style="line-height:30px;">
+                        <span style="display:inline-block; width:650px;">
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">배송비기준</span> :
+                            <input type="text" name="foreignstandardprice" id="ForeignStandardPrice" maxlength="8" th:value="${shopinfo.getForeignstandardprice()}" class="input_text" style="width: 100px;" />원 미만시 배송비
+                            <input type="text" name="foreigndeliveryprice" id="ForeignDeliveryPrice" maxlength="5" th:value="${shopinfo.getForeigndeliveryprice()}" class="input_text" style="width: 100px;" />원 부과
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">반품배송비</span> :
+                            <input type="text" name="foreignreturndeliveryprice" id="ForeignReturnDeliveryPrice" maxlength="5" th:value="${shopinfo.getForeignreturndeliveryprice()}" class="input_text" style="width: 100px;" />원
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">교환배송비</span> :
+                            <input type="text" name="foreignchangedeliveryprice" id="ForeignChangeDeliveryPrice" maxlength="5" th:value="${shopinfo.getForeignchangedeliveryprice()}" class="input_text" style="width: 100px;" />원
+                            <br />
+
+                            <input type="hidden" name="O_ForeignStandardPrice" id="O_ForeignStandardPrice" th:value="${shopinfo.getForeignstandardprice()}" />
+                            <input type="hidden" name="O_ForeignDeliveryPrice" id="O_ForeignDeliveryPrice" th:value="${shopinfo.getForeigndeliveryprice()}" />
+                            <input type="hidden" name="O_ForeignReturnDeliveryPrice" id="O_ForeignReturnDeliveryPrice" th:value="${shopinfo.getForeignreturndeliveryprice()}" />
+                            <input type="hidden" name="O_ForeignChangeDeliveryPrice" id="O_ForeignChangeDeliveryPrice" th:value="${shopinfo.getForeignchangedeliveryprice()}" />
+                        </span>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+            <div style="height:15px"></div>
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span>반송지</span></td>
+                    <td style="line-height:30px;">
+                        <span style="display:inline-block; width:650px;">
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">우편번호</span> :
+                            <input type="text" name="rzipcode" id="RZipCode" maxlength="6" th:value="${shopinfo.getRzipcode()}" class="input_text" style="width: 80px;" readonly="readonly" />
+                            <a th:if="${Permission.isWrite()}" href="javascript:execDaumPostcode('RZipCode', 'RAddr1')" class="btn-c"><span>우편번호</span></a>
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">기본주소</span> :
+                            <input type="text" name="raddr1" id="RAddr1" maxlength="200" th:value="${shopinfo.raddr1}" class="input_text" style="width: 500px;" readonly="readonly" />
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">상세주소</span> :
+                            <input type="text" name="raddr2" id="RAddr2" maxlength="200" th:value="${shopinfo.getRaddr2()}" class="input_text" style="width: 500px;" />
+                            <br />
+
+                            <input type="hidden" name="O_RZipCode" id="O_RZipCode" th:value="${shopinfo.getRzipcode()}" />
+                            <input type="hidden" name="O_RAddr1" id="O_RAddr1" th:value="${shopinfo.getRaddr1()}" />
+                            <input type="hidden" name="O_RAddr2" id="O_RAddr2" th:value="${shopinfo.getRaddr2()}" />
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="height:15px"></div>
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span>해외 반송지</span></td>
+                    <td style="line-height:30px;">
+                        <span style="display:inline-block; width:650px;">
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">우편번호</span> :
+                            <input type="text" name="foreignrzipCode" id="ForeignRZipCode" maxlength="6" th:value="${shopinfo.getForeignrzipcode()}" class="input_text" style="width: 80px;" readonly="readonly" />
+                            <a th:if="${Permission.isWrite()}" href="javascript:execDaumPostcode('ForeignRZipCode', 'ForeignRAddr1')" class="btn-c"><span>우편번호</span></a>
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">기본주소</span> :
+                            <input type="text" name="foreignraddr1" id="ForeignRAddr1" maxlength="200" th:value="${shopinfo.getForeignraddr1()}" class="input_text" style="width: 500px;" readonly="readonly" />
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">상세주소</span> :
+                            <input type="text" name="foreignraddr2" id="ForeignRAddr2" maxlength="200" th:value="${shopinfo.getForeignraddr2()}" class="input_text" style="width: 500px;" />
+                            <br />
+
+                            <input type="hidden" name="O_ForeignRZipCode" id="O_ForeignRZipCode" th:value="${shopinfo.getForeignrzipcode()}" />
+                            <input type="hidden" name="O_ForeignRAddr1" id="O_ForeignRAddr1" th:value="${shopinfo.getForeignraddr1()}" />
+                            <input type="hidden" name="O_ForeignRAddr2" id="O_ForeignRAddr2" th:value="${shopinfo.getForeignraddr2()}" />
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="height:15px"></div>
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 150px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span>상품평</span></td>
+                    <td style="line-height:30px;">
+                        <span style="display:inline-block; width:650px;">
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">일반상품평</span> :
+                            <input type="text" name="txtreviewpoint" id="TxtReviewPoint" maxlength="200" th:value="${shopinfo.getTxtreviewpoint()}" class="input_text" style="width: 100px;" />포인트
+                            <br />
+
+                            <span class="required" style="display:inline-block;width:80px;line-height:23px;">포토상품평</span> :
+                            <input type="text" name="imgreviewpoint" id="ImgReviewPoint" maxlength="200" th:value="${shopinfo.getImgreviewpoint()}" class="input_text" style="width: 100px;" />포인트
+                            <br />
+
+                            <input type="hidden" name="O_TxtReviewPoint" id="O_TxtReviewPoint" th:value="${shopinfo.getTxtreviewpoint()}" />
+                            <input type="hidden" name="O_ImgReviewPoint" id="O_ImgReviewPoint" th:value="${shopinfo.getImgreviewpoint()}" />
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="height:15px"></div>
+        </form>
+    </div>
+
+    <div class="posR mt20 mb20" th:if="${Permission.isWrite()}">
+        <div class="ac">
+            <a href="javascript:ins_ShopInfo();" class="btn-c"><span>수정</span></a>
+        </div>
+    </div>
+
+</div>

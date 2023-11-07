@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.manage.mapper.ShopInfoMapper">
+    <select id="select_by_shopinfo" resultType="shopInfoDTO">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    standardprice,
+                    deliveryprice,
+                    returndeliveryprice,
+                    changedeliveryprice,
+                    foreignstandardprice,
+                    foreigndeliveryprice,
+                    foreignreturndeliveryprice,
+                    foreignchangedeliveryprice,
+                    rzipcode,
+                    raddr1,
+                    raddr2,
+                    foreignrzipcode,
+                    foreignraddr1,
+                    foreignraddr2,
+                    txtreviewpoint,
+                    imgreviewpoint
+        from        shopinfos;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_shopinfo" parameterType="shopInfoDTO">
+        update shopinfos set
+             standardprice = #{standardprice},
+             deliveryprice = #{deliveryprice},
+             returndeliveryprice = #{returndeliveryprice},
+             changedeliveryprice = #{changedeliveryprice},
+             foreignstandardprice = #{foreignstandardprice},
+             foreigndeliveryprice = #{foreigndeliveryprice},
+             foreignreturndeliveryprice = #{foreignreturndeliveryprice},
+             foreignchangedeliveryprice = #{foreignchangedeliveryprice},
+             rzipcode = #{rzipcode},
+             raddr1 = #{raddr1},
+             raddr2 = #{raddr2},
+             foreignrzipcode = #{foreignrzipcode},
+             foreignraddr1 = #{foreignraddr1},
+             foreignraddr2 = #{foreignraddr2},
+             txtreviewpoint = #{txtreviewpoint},
+             imgreviewpoint = #{imgreviewpoint},
+             updateid = #{createid},
+             updateip = #{createip},
+             updatedt = now()
+    </update>
+</mapper>
