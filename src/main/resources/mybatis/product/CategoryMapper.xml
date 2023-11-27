@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.product.mapper.CategoryMapper">
+    <select id="select_by_category1_list_for_productcnt" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                            a.categorycode1, a.categoryname1, a.displayflag, a.displaynum,
+                            IFNULL(COUNT(b.productcode), 0) as productcnt,
+                            IFNULL(SUM(case when b.salestate = 'Y' then 1 else 0 end), 0) as productsalecnt
+        from                products_category1 as a
+        left outer join     products as b on a.categorycode1 = b.categorycode1
+        group by            a.categorycode1, a.categoryname1, a.displayflag, a.displaynum
+        order by            a.displaynum asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category2_list_for_productcnt" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                            a.categorycode1, a.categorycode2, a.categoryname2, a.displayflag, a.displaynum,
+                            IFNULL(COUNT(b.productcode), 0) as productcnt,
+                            IFNULL(SUM(case when b.salestate = 'Y' then 1 else 0 end), 0) as productsalecnt
+        from                products_category2 as a
+        left outer join     products as b on a.categorycode1 = b.categorycode1 and a.categorycode2 = b.categorycode2
+        group by            a.categorycode1, a.categorycode2, a.categoryname2, a.displayflag, a.displaynum
+        order by            a.categorycode1 asc, a.displaynum asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category1_list" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    categorycode1, categoryname1, displayflag, displaynum
+        from        products_category1
+        order by    displaynum asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category2_list" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    categorycode1, categorycode2, categoryname2, displayflag, displaynum
+        from        products_category2
+        where       categorycode1 = #{categoryCode1}
+        order by    categorycode1 asc, displaynum asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category1_for_max_code" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(MAX(categorycode1), 0) + 1
+        from        products_category1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category2_for_max_code" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(MAX(categorycode2), 0) + 1
+        from        products_category2
+        where       categorycode1 = #{categoryCode1};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category1_for_max_displaynum" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(MAX(displaynum), 0) + 1
+        from        products_category1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category2_for_max_displaynum" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(MAX(displaynum), 0) + 1
+        from        products_category2
+        where       categorycode1 = #{categoryCode1};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <insert id="insert_category1" parameterType="categoryDto">
+        insert into products_category1 (
+            categorycode1,
+            categoryname1,
+            displayflag,
+            displaynum,
+            createid,
+            createip
+        ) values (
+                     #{categorycode1},
+                     #{categoryname1},
+                     #{displayflag},
+                     #{displaynum},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <insert id="insert_category2" parameterType="categoryDto">
+        insert into products_category2 (
+            categorycode1,
+            categorycode2,
+            categoryname2,
+            displayflag,
+            displaynum,
+            createid,
+            createip
+        ) values (
+                     #{categorycode1},
+                     #{categorycode2},
+                     #{categoryname2},
+                     #{displayflag},
+                     #{displaynum},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <select id="select_by_category1" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    categorycode1, categoryname1, displayflag, displaynum
+        from        products_category1
+        where       categorycode1 = #{categoryCode1};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category2" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    categorycode1, categorycode2, categoryname2, displayflag, displaynum
+        from        products_category2
+        where       categorycode1 = #{categoryCode1}
+        and         categorycode2 = #{categoryCode2};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_category1" parameterType="categoryDto">
+        update products_category1 set
+                                      categoryname1 = #{categoryname1},
+                                      displayflag = #{displayflag},
+                                      updateid = #{createid},
+                                      updateip = #{createip}
+        where categorycode1 = #{categorycode1}
+    </update>
+
+    <update id="update_category2" parameterType="categoryDto">
+        update products_category2 set
+                                      categoryname2 = #{categoryname2},
+                                      displayflag = #{displayflag},
+                                      updateid = #{createid},
+                                      updateip = #{createip}
+        where categorycode1 = #{categorycode1}
+          and   categorycode2 = #{categorycode2}
+    </update>
+
+    <select id="select_by_category1_for_displaynum_up" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    categorycode1, displaynum
+        from        products_category1
+        where       displaynum <![CDATA[<]]> #{displayNum}
+        order by    displaynum desc
+        limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category1_for_displaynum_down" resultType="categoryDTO">
+        set session transaction isolation level read uncommitted;
+
+        select
+            categorycode1, displaynum
+        from        products_category1
+        where       displaynum <![CDATA[>]]> #{displayNum}
+        order by    displaynum asc
+        limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category2_for_displaynum_up" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    categorycode1, categorycode2, displaynum
+        from        products_category2
+        where       categorycode1 = #{categoryCode1}
+        and         displaynum <![CDATA[<]]> #{displayNum}
+        order by    displaynum desc
+        limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_category2_for_displaynum_down" resultType="categoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    categorycode1, categorycode2, displaynum
+        from        products_category2
+        where       categorycode1 = #{categoryCode1}
+        and         displaynum <![CDATA[>]]> #{displayNum}
+        order by    displaynum asc
+        limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_category1_displaynum" parameterType="categoryDto">
+        update products_category1 set
+                                      displaynum = #{displaynum},
+                                      updateid = #{createid},
+                                      updateip = #{createip}
+        where categorycode1 = #{categorycode1}
+    </update>
+
+    <update id="update_category2_displaynum" parameterType="categoryDto">
+        update products_category2 set
+                                      displaynum = #{displaynum},
+                                      updateid = #{createid},
+                                      updateip = #{createip}
+        where categorycode1 = #{categorycode1}
+        and   categorycode2 = #{categorycode2}
+    </update>
+</mapper>

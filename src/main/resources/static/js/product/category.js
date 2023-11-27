@@ -8,9 +8,9 @@ function mod_Category1(num) {
     var categoryName1 = alltrim($("input[name='MCategoryName1']").eq(num).val());
     var displayFlag = $("select[name='MDisplayFlag']").eq(num).val();
 
-    document.ModCategory.CategoryCode1.value = categoryCode1;
-    document.ModCategory.CategoryName.value = categoryName1;
-    document.ModCategory.DisplayFlag.value = displayFlag;
+    document.ModCategory.categoryCode1.value = categoryCode1;
+    document.ModCategory.categoryName.value = categoryName1;
+    document.ModCategory.displayFlag.value = displayFlag;
 
     lay_CategoryModify();
 }
@@ -39,10 +39,10 @@ function mod_Category2(num) {
     var categoryName2 = alltrim($("input[name='MCategoryName2']").eq(num).val());
     var displayFlag = $("select[name='MDisplayFlag']").eq(num).val();
 
-    document.ModCategory.CategoryCode1.value = categoryCode1;
-    document.ModCategory.CategoryCode2.value = categoryCode2;
-    document.ModCategory.CategoryName.value = categoryName2;
-    document.ModCategory.DisplayFlag.value = displayFlag;
+    document.ModCategory.categoryCode1.value = categoryCode1;
+    document.ModCategory.categoryCode2.value = categoryCode2;
+    document.ModCategory.categoryName.value = categoryName2;
+    document.ModCategory.displayFlag.value = displayFlag;
 
     lay_CategoryModify();
 }
@@ -65,7 +65,7 @@ function mod_Category2DisplayNum(num, modType) {
 function lay_CategoryModifyForm(depth, categoryCode1, categoryCode2) {
     $.ajax({
         type		 : "post",
-        url			 : "/product/category/ajax/categorymodifyform",
+        url			 : "/product/category/ajax/modifyform",
         async		 : false,
         data		 : "Depth=" + depth + "&CategoryCode1=" + categoryCode1 + "&CategoryCode2=" + categoryCode2,
         dataType	 : "text",
@@ -103,10 +103,12 @@ function lay_CategoryModifyForm(depth, categoryCode1, categoryCode2) {
 /* 전체분류 수정폼 체크 */
 function lay_CategoryModify() {
     var depth			 = $("input[name='Depth']",			 "form[name='ModCategory']").val();
-    var categoryCode1	 = $("input[name='CategoryCode1']",	 "form[name='ModCategory']").val();
-    var categoryCode2	 = $("input[name='CategoryCode2']",	 "form[name='ModCategory']").val();
-    var categoryName	 = $("input[name='CategoryName']",	 "form[name='ModCategory']").val();
+    var categoryCode1	 = $("input[name='categoryCode1']",	 "form[name='ModCategory']").val();
+    var categoryCode2	 = $("input[name='categoryCode2']",	 "form[name='ModCategory']").val();
+    var categoryName	 = $("input[name='categoryName']",	 "form[name='ModCategory']").val();
     //var displayFlag		 = $("select[name='DisplayFlag']",	 "form[name='ModCategory']").val();
+
+    var url = "modify1";
 
     if (categoryCode1.length == 0) {
         alert("대분류 코드 정보가 없습니다.");
@@ -114,6 +116,7 @@ function lay_CategoryModify() {
     }
 
     if (depth === "2") {
+        url = "modify2";
         if (categoryCode2.length == 0) {
             alert("소분류 코드 정보가 없습니다.");
             return;
@@ -122,7 +125,7 @@ function lay_CategoryModify() {
 
     if (categoryName.length == 0) {
         alert("분류명을 입력하여 주십시오.");
-        $("input[name='CategoryName']", "form[name='ModCategory']").focus();
+        $("input[name='categoryName']", "form[name='ModCategory']").focus();
         return;
     }
 
@@ -130,7 +133,7 @@ function lay_CategoryModify() {
     if (conf) {
         $.ajax({
             type		 : "post",
-            url			 : "/product/category/ajax/categorymodifyok",
+            url			 : "/product/category/ajax/"+url,
             async		 : true,
             data		 : $("#ModCategory").serialize(),
             dataType	 : "text",
@@ -163,11 +166,15 @@ function lay_CategoryModify() {
 
 /* 전체분류 게시순서 변경 */
 function mod_CategoryDisplayNum(depth, modType, categoryCode1, categoryCode2) {
+    var url = "displaynum_modify1";
+    if (depth == "2") {
+        url = "displaynum_modify2";
+    }
     $.ajax({
         type		 : "post",
-        url			 : "/product/category/ajax/categorydisplaymummodifyok",
+        url			 : "/product/category/ajax/"+url,
         async		 : true,
-        data		 : "Depth=" + depth + "&ModType=" + modType + "&CategoryCode1=" + categoryCode1 + "&CategoryCode2=" + categoryCode2,
+        data		 : "Depth=" + depth + "&modType=" + modType + "&categoryCode1=" + categoryCode1 + "&categoryCode2=" + categoryCode2,
         dataType	 : "text",
         beforeSend: function(xhr){
             xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
@@ -226,7 +233,7 @@ function lay_CategoryAddForm(num) {
 
     $.ajax({
         type		 : "post",
-        url			 : "/product/category/ajax/categoryaddform",
+        url			 : "/product/category/ajax/addform",
         async		 : false,
         data		 : $("#FormCategory").serialize(),
         dataType	 : "text",
@@ -263,8 +270,10 @@ function lay_CategoryAddForm(num) {
 function lay_CategoryAdd() {
     var depth	 = alltrim($("#Depth", "form[name='InsCategory']").val());
     var cateName = "";
+    var url = "add1";
 
     if (depth === "2") {
+        url = "add2";
         var categoryCode1 = alltrim($("#CategoryCode1", "form[name='InsCategory']").val());
         if (categoryCode1.length == 0) {
             alert("대분류를 선택해 주십시오.");
@@ -284,7 +293,7 @@ function lay_CategoryAdd() {
     if (conf) {
         $.ajax({
             type		 : "post",
-            url			 : "/product/category/ajax/categoryaddok",
+            url			 : "/product/category/ajax/" + url,
             async		 : true,
             data		 : $("#InsCategory").serialize(),
             dataType	 : "text",

@@ -177,7 +177,7 @@ function mod_ListAllBrand(num) {
 
 /* 브랜드 게시순서 팝업 */
 function pop_BrandDisplayNum() {
-    window.open("/product/brand/popup/branddisplaylsit", "BrandDisplayList", "width=860, height=850, top=10, left=1, scrollbars=yes").focus();
+    window.open("/product/brand/popup/displaylist", "BrandDisplayList", "width=860, height=850, top=10, left=1, scrollbars=yes").focus();
 }
 
 
@@ -185,9 +185,9 @@ function pop_BrandDisplayNum() {
 function mod_ListBrand(brandCode, useFlag) {
     $.ajax({
         type		 : "post",
-        url			 : "/product/brand/ajax/brandpartmodifyok",
+        url			 : "/product/brand/ajax/useflag_modify",
         async		 : false,
-        data		 : "BrandCode=" + brandCode + "&UseFlag=" + useFlag,
+        data		 : "brandCode=" + brandCode + "&useFlag=" + useFlag,
         dataType	 : "text",
         beforeSend: function(xhr){
             xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
@@ -223,9 +223,9 @@ function mod_ListBrand(brandCode, useFlag) {
 function mod_DisplayNum(brandCode, modType) {
     $.ajax({
         type		 : "post",
-        url			 : "/product/brand/ajax/branddisplaynummodifyok",
+        url			 : "/product/brand/ajax/displaynummodify",
         async		 : true,
-        data		 : "BrandCode=" + brandCode + "&ModType=" + modType,
+        data		 : "brandCode=" + brandCode + "&modType=" + modType,
         dataType	 : "text",
         beforeSend: function(xhr){
             xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));

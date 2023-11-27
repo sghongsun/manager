@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.product.mapper.ProductMapper">
+    <sql id="products_excel_temp_field">
+        item_no,
+        categorycode1,
+        categorycode2,
+        productclass,
+        marketingword,
+        productname,
+        standard,
+        productshortname,
+        onlineflag,
+        empflag,
+        bizflag,
+        costprice,
+        agencyprice,
+        tagprice,
+        saleprice,
+        empprice,
+        bizprice,
+        minsalecnt,
+        maxsalecnt,
+        qty,
+        offflag,
+        salestate,
+        brandcode,
+        keyword,
+        description,
+        fixdelvflag,
+        freedelvflag,
+        taxtype,
+        productkind,
+        producttype,
+        productgubn,
+        makeyear,
+        makedm,
+        maker,
+        origincode,
+        origin,
+        sex,
+        stockupflag,
+        releasecentercode,
+        releaseproductcode
+    </sql>
+
+    <sql id="products_field">
+        item_no,
+        categorycode1,
+        categorycode2,
+        productclass,
+        marketingword,
+        productname,
+        standard,
+        productshortname,
+        onlineflag,
+        empflag,
+        bizflag,
+        costprice,
+        agencyprice,
+        tagprice,
+        saleprice,
+        empprice,
+        bizprice,
+        minsalecnt,
+        maxsalecnt,
+        offflag,
+        salestate,
+        brandcode,
+        keyword,
+        description,
+        fixdelvflag,
+        freedelvflag,
+        taxtype,
+        productkind,
+        producttype,
+        productgubn,
+        makeyear,
+        makedm,
+        maker,
+        origincode,
+        origin,
+        sex,
+        stockupflag,
+        releasecentercode,
+        releaseproductcode
+    </sql>
+
+    <sql id="products_select_field">
+        a.productcode,
+        a.item_no,
+        a.categorycode1,
+        a.categorycode2,
+        a.productclass,
+        a.marketingword,
+        a.productname,
+        a.standard,
+        a.productshortname,
+        a.onlineflag,
+        a.empflag,
+        a.bizflag,
+        a.costprice,
+        a.agencyprice,
+        a.tagprice,
+        a.saleprice,
+        a.empprice,
+        a.bizprice,
+        a.minsalecnt,
+        a.maxsalecnt,
+        a.offflag,
+        a.salestate,
+        a.brandcode,
+        a.keyword,
+        a.description,
+        a.fixdelvflag,
+        a.freedelvflag,
+        a.taxtype,
+        a.productkind,
+        a.producttype,
+        a.productgubn,
+        a.makeyear,
+        a.makedm,
+        a.maker,
+        a.origincode,
+        a.origin,
+        a.sex,
+        a.stockupflag,
+        a.releasecentercode,
+        a.releaseproductcode,
+        a.createid as id,
+        a.createdt
+    </sql>
+
+    <select id="select_by_list_for_totalcount" parameterType="hashmap" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+        ifnull(count(a.productcode), 0) as totalcount
+        from            products as a
+        inner join      products_brand as b on a.brandcode = b.brandcode
+        left outer join view_products_stock_for_usable as c on a.productcode = c.productcode
+        left outer join view_products_stock as s on a.productcode = s.productcode
+        <where>
+            <include refid="product_list_search" />
+        </where>
+        ;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_list" parameterType="hashmap" resultType="productListDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+        <include refid="products_select_field" />,
+        b.brandname,
+        ifnull(c.stock, 0) as stock,
+        ifnull(s.stockqty, 0) as stockqty,
+        ifnull(s.saleqty, 0) as shopsaleqty,
+        ifnull(s.outsaleqty, 0) as outsaleqty,
+        ifnull(s.restqty, 0) as restqty,
+        ifnull((select imageurl from products_image as z where z.productcode = a.productcode and z.imageno = 1 and sizeclass='0060'), '') as imgurl
+        from            products as a
+        inner join      products_brand as b on a.brandcode = b.brandcode
+        left outer join view_products_stock_for_usable as c on a.productcode = c.productcode
+        left outer join view_products_stock as s on a.productcode = s.productcode
+        <where>
+            <include refid="product_list_search" />
+        </where>
+        <include refid="product_list_search_orderby" />
+        limit           #{limitstart}, #{recordsize};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <sql id="product_list_search">
+        <if test='usedate != "Y" and sdate != "" and sdate != null'>
+            <choose>
+                <when test='datetype.equals("C")'>
+                    and DATE_FORMAT(a.createdt, '%Y-%m-%d')  <![CDATA[>=]]> #{sdate}
+                </when>
+                <otherwise>
+                    and DATE_FORMAT(a.updatedt, '%Y-%m-%d') <![CDATA[>=]]> #{sdate}
+                </otherwise>
+            </choose>
+        </if>
+        <if test='usedate != "Y" and edate != "" and edate != null'>
+            <choose>
+                <when test='datetype.equals("C")'>
+                    and DATE_FORMAT(a.createdt, '%Y-%m-%d') <![CDATA[<=]]> #{edate}
+                </when>
+                <otherwise>
+                    and DATE_FORMAT(a.updatedt, '%Y-%m-%d') <![CDATA[<=]]> #{edate}
+                </otherwise>
+            </choose>
+        </if>
+        <if test='releasecentercode != null and releasecentercode != ""'>
+            and a.releasecentercode = #{releasecentercode}
+        </if>
+        <if test='categorycode1 != null and categorycode1 != ""'>
+            and a.categorycode1 = #{categorycode1}
+        </if>
+        <if test='categorycode2 != null and categorycode2 != ""'>
+            and a.categorycode2 = #{categorycode2}
+        </if>
+        <if test='onlineflag != null and onlineflag != ""'>
+            and a.onlineflag = 'Y'
+        </if>
+        <if test='bizflag != null and bizflag != ""'>
+            and a.bizflag = 'Y'
+        </if>
+        <if test='fixdelvflag != null and fixdelvflag != ""'>
+            and a.fixdelvflag = 'Y'
+        </if>
+        <if test='freedelvflag != null and freedelvflag != ""'>
+            and a.freedelvflag = 'Y'
+        </if>
+        <if test='offflag != null and offflag != ""'>
+            and a.offflag = #{offflag}
+        </if>
+        <if test='taxtype != null and taxtype != ""'>
+            and a.taxtype = #{taxtype}
+        </if>
+        <if test='brandcode != null and brandcode != ""'>
+            and a.brandcode = #{brandcode}
+        </if>
+        <if test='producttype != null and producttype != ""'>
+            and a.producttype = #{producttype}
+        </if>
+        <if test='!salestate[0].equals("0")'>
+            and a.salestate in
+            <foreach collection="salestate" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test='!productclass[0].equals("0")'>
+            and a.productclass in
+            <foreach collection="productclass" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test='stockcnt1 != null and stockcnt1 != ""'>
+            and c.stock <![CDATA[>=]]> #{stockcnt1}
+        </if>
+        <if test='stockcnt2 != null and stockcnt2 != ""'>
+            and c.stock <![CDATA[<=]]> #{stockcnt2}
+        </if>
+        <if test='keywords != null'>
+            <foreach collection="keywords" item="item" index="index" open="and (" close=")" separator="or">
+                <choose>
+                    <when test='searchtype.equals("productname")'>
+                        a.productname LIKE CONCAT('%', #{item}, '%')
+                    </when>
+                    <when test='searchtype.equals("productcode")'>
+                        a.productcode = #{item}
+                    </when>
+                    <when test='searchtype.equals("itemno")'>
+                        a.item_no = #{item}
+                    </when>
+                </choose>
+            </foreach>
+        </if>
+        <if test='notinproductcodes != null'>
+            and a.productcode not in
+            <foreach collection="notinproductcodes" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </sql>
+
+    <sql id="product_list_search_orderby">
+        <choose>
+            <when test='orderby.equals("0")'>
+                order by a.productcode desc
+            </when>
+            <when test='orderby.equals("1")'>
+                order by c.stock desc, a.productcode desc
+            </when>
+            <when test='orderby.equals("2")'>
+                order by c.stock asc, a.productcode desc
+            </when>
+            <when test='orderby.equals("3")'>
+                order by a.productname asc, a.productcode desc
+            </when>
+            <when test='orderby.equals("4")'>
+                order by a.productname desc, a.productcode desc
+            </when>
+            <when test='orderby.equals("5")'>
+                order by a.saleprice asc, a.productcode desc
+            </when>
+            <when test='orderby.equals("6")'>
+                order by a.saleprice desc, a.productcode desc
+            </when>
+            <otherwise>
+                order by a.productcode desc
+            </otherwise>
+        </choose>
+    </sql>
+</mapper>

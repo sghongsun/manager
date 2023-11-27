@@ -111,7 +111,7 @@
                     <td style="line-height:30px;">
                         <span style="display:inline-block; width:650px;">
                             <span class="required" style="display:inline-block;width:80px;line-height:23px;">우편번호</span> :
-                            <input type="text" name="foreignrzipCode" id="ForeignRZipCode" maxlength="6" th:value="${shopinfo.getForeignrzipcode()}" class="input_text" style="width: 80px;" readonly="readonly" />
+                            <input type="text" name="foreignrzipcode" id="ForeignRZipCode" maxlength="6" th:value="${shopinfo.getForeignrzipcode()}" class="input_text" style="width: 80px;" readonly="readonly" />
                             <a th:if="${Permission.isWrite()}" href="javascript:execDaumPostcode('ForeignRZipCode', 'ForeignRAddr1')" class="btn-c"><span>우편번호</span></a>
                             <br />
 

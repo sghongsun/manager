@@ -1,0 +1,411 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/product/product.js(ver=${@commonUtil.getNow()})}"></script>
+
+    <form name="searchForm" id="form" method="get" action="/product/product/list" onsubmit="return true" autocomplete="off">
+        <input type="hidden" th:name="page" th:id="page" th:value="${searchDto.getPage()}" />
+        <input type="hidden" name="DownExcelSetYN" />
+        <div class="filterArea">
+            <div class="tb_layout_1">
+                <table>
+                    <colgroup>
+                        <col style="width: 150px;" />
+                        <col style="width: auto;" />
+                        <col style="width: 150px;" />
+                        <col style="width: auto;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="title">일자</td>
+                        <td>
+                            <label><span style="display:inline-block; width:110px;"><input type="checkbox" name="usedate" value="Y" th:checked="${searchDto.getUsedate() == 'Y' ? 'true' : 'false'}" />날짜 적용 안함</span></label>
+                            <select name="datetype" id="DateType">
+                                <option value="C">등록일자</option>
+                                <option value="U">수정일자</option>
+                            </select>
+                            <script>
+                                $("#DateType").val(`[[${searchDto.getDatetype()}]]`);
+                            </script>
+                            <input type="text" name="sdate" id="sdate" th:value="${searchDto.getSdate()}" maxlength="10" class="input_text" style="width:100px" onclick="dateSelect('sdate')" />
+                            <img src=/images/icon_cal.gif border="0" onclick="dateSelect('sdate')" style="cursor:pointer" /> ~
+                            <input type="text" name="edate" id="edate" th:value="${searchDto.getEdate()}" maxlength="10" class="input_text" style="width:100px" onclick="dateSelect('edate')" />
+                            <img src=/images/icon_cal.gif border="0" onclick="dateSelect('edate')" style="cursor:pointer" />
+                        </td>
+                        <td class="title">출고지</td>
+                        <td>
+                            <select name="releasecentercode" id="SReleaseCenterCode" class="input_text">
+                                <option value="">전체</option>
+                                <option th:each="releasecenter : ${releasecentercodelist}" th:value="${releasecenter.getReleasecentercode()}" th:text="${releasecenter.getReleasecentername()}"></option>
+                            </select>
+                            <script>
+                                $("#SReleaseCenterCode").val("[[${searchDto.getReleasecentercode()}]]");
+                            </script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="title">분류</td>
+                        <td>
+                            <select name="categorycode1" id="categorycode1" class="input_text" style="width:180px" onchange="chg_CategoryCode1();">
+                                <option value="">대분류 선택</option>
+                                <option th:each="category1 : ${category1list}" th:value="${category1.getCategorycode1()}" th:text="${category1.getCategoryname1()}"></option>
+                            </select>
+                            <script>
+                                $("#categorycode1").val(`[[${searchDto.getCategorycode1()}]]`);
+                            </script>
+                            &nbsp;
+                            <select name="categorycode2" id="categorycode2" class="input_text" style="width:180px">
+                                <option value="">소분류 선택</option>
+                                <option th:each="category2 : ${category2list}" th:value="${category2.getCategorycode2()}" th:text="${category2.getCategoryname2()}"></option>
+                            </select>
+                            <script>
+                                $("#categorycode2").val('[[${searchDto.getCategorycode2()}]]');
+                            </script>
+                        </td>
+                        <td class="title">상품종류</td>
+                        <td>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="onlineflag"	value="Y" th:checked="${searchDto.getOnlineflag() == 'Y' ? 'true' : 'false'}" />온라인전용</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="bizflag"		value="Y" th:checked="${searchDto.getBizflag() == 'Y' ? 'true' : 'false'}" />사업자전용</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="fixdelvflag"	value="Y" th:checked="${searchDto.getFixdelvflag() == 'Y' ? 'true' : 'false'}" />정기배송</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="freedelvflag"	value="Y" th:checked="${searchDto.getFreedelvflag() == 'Y' ? 'true' : 'false'}" />배송비무료</span></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="title">판매구분</td>
+                        <td colspan="3">
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="salestate" value="0" th:checked="${#arrays.contains(searchDto.getSalestate(), '0') ? 'true' : 'false'}" />전체</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="salestate" value="Y" th:checked="${#arrays.contains(searchDto.getSalestate(), 'Y') ? 'true' : 'false'}" />판매중</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="salestate" value="N" th:checked="${#arrays.contains(searchDto.getSalestate(), 'N') ? 'true' : 'false'}" />판매중지</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="salestate" value="P" th:checked="${#arrays.contains(searchDto.getSalestate(), 'P') ? 'true' : 'false'}" />게시안함</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="salestate" value="F" th:checked="${#arrays.contains(searchDto.getSalestate(), 'F') ? 'true' : 'false'}" />미사용</span></label>
+
+                            <select name="offflag" id="SOffFlag">
+                                <option value="">품절여부</option>
+                                <option value="N">판매</option>
+                                <option value="Y">품절</option>
+                            </select>
+                            <script>
+                                $("#SOffFlag").val(`[[${searchDto.getOffflag()}]]`);
+                            </script>
+                            <select name="taxtype" id="STaxType">
+                                <option value="">과세/면세구분</option>
+                                <option value="V">과세</option>
+                                <option value="E">면세</option>
+                            </select>
+                            <script>
+                                $("#STaxType").val(`[[${searchDto.getTaxtype()}]]`);
+                            </script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="title">브랜드/고시정보</td>
+                        <td colspan="3">
+                            <select name="SBrandCode" id="SBrandCode">
+                                <option value="">브랜드</option>
+                                <option th:each="brand : ${brandlist}" th:value="${brand.getBrandcode()}" th:text="${brand.getBrandname()}" th:style="${brand.getUseflag() == 'N' ? 'background:#d8d8d8' : ''}"></option>
+
+                            </select>
+                            <script>
+                                $("#SBrandCode").val(`[[${searchDto.getBrandcode()}]]`);
+                            </script>
+
+                            <select name="producttype" id="SProductType">
+                                <option value="">고시정보</option>
+                                <option th:each="gosi : ${gosilist}" th:value="${gosi.getCode1()}" th:text="${gosi.getName1()}"></option>
+                            </select>
+                            <script>
+                                $("#SProductType").val(`[[${searchDto.getProducttype()}]]`);
+                            </script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="title">상품구분</td>
+                        <td>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="productclass" value="0" th:checked="${#arrays.contains(searchDto.getProductclass(), '0') ? 'true' : 'false'}" />전체</span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="productclass" value="P" th:checked="${#arrays.contains(searchDto.getProductclass(), 'P') ? 'true' : 'false'}" th:text="${@commonUtil.getProductClassName('P')}" /></span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="productclass" value="S" th:checked="${#arrays.contains(searchDto.getProductclass(), 'S') ? 'true' : 'false'}" th:text="${@commonUtil.getProductClassName('S')}" /></span></label>
+                            <label><span style="display:inline-block;width:100px"><input type="checkbox" name="productclass" value="G" th:checked="${#arrays.contains(searchDto.getProductclass(), 'G') ? 'true' : 'false'}" th:text="${@commonUtil.getProductClassName('G')}" /></span></label>
+                        </td>
+                        <td class="title">재고조건</td>
+                        <td>
+                            <input type="text" name="stockcnt1" id="SStockCnt1" th:value="${searchDto.getStockcnt1()}" maxlength="5" class="input_text" style="width:100px;" /> ~
+                            <input type="text" name="stockcnt2" id="SStockCnt2" th:value="${searchDto.getStockcnt2()}" maxlength="5" class="input_text" style="width:100px;"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="title">검색조건</td>
+                        <td colspan="3">
+                            <div style="float:left; width:390px; height:100%;">
+                                <select name="searchtype" id="SKinds">
+                                    <option value="productname">상품명</option>
+                                    <option value="itemno">ERP코드</option>
+                                    <option value="productcode">상품코드</option>
+                                </select>
+                                <script>
+                                    $("#SKinds").val(`[[${searchDto.getSearchtype()}]]`);
+                                </script>
+                                <textarea name="keyword" id="SWord" style="width:250px; height:60px;vertical-align:top;">[[${searchDto.getKeyword()}]]</textarea>
+                            </div>
+                            <div style="padding-top:45px;">
+                                <a href="javascript:getSearch();" class="btn-c"><span>검색</span></a> &nbsp;
+                                <a href="javascript:location.href=location.pathname;" class="btn-d"><span>리스트</span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="title">정렬선택</td>
+                        <td>
+                            <select name="orderby" id="SOrderBy" onchange="getSearch();">
+                                <option value="0">최근 등록순</option>
+                                <option value="1">재고 많은 순</option>
+                                <option value="2">재고 적은 순</option>
+                                <option value="3">상품명 올림차순</option>
+                                <option value="4">상품명 내림차순</option>
+                                <option value="5">판매가 올림차순</option>
+                                <option value="6">판매가 내림차순</option>
+                            </select>
+                            <script>
+                                $("#SOrderBy").val(`[[${searchDto.getOrderby()}]]`);
+                            </script>
+                        </td>
+                        <td class="title">정렬선택</td>
+                        <td>
+                            <select name="recordsize" id="PageSize">
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <script>
+                                $("#PageSize").val(`[[${searchDto.getRecordsize()}]]`);
+                            </script>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+
+    <form name="form1" method="get" action="">
+        <div class="tb_data_1">
+            <div class="tip" th:if="${searchDto.getPagination() != null}" th:text="'[전체 ' + ${#numbers.formatInteger(searchDto.getPagination().getTotalRecordCount(),0,'COMMA') + ' 건]'}"></div>
+            <div class="tip" th:if="${searchDto.getPagination() == null}" th:text="'[전체 0 건]'"></div>
+            <th:block th:if="${Permission.isWrite()}">
+                <div class="btnRight3">
+                    <a href="/product/product/add" class="btn-c"><span>상품등록</span></a>
+                    <a href="javascript:mod_SelSaleState();" class="btn-c"><span>일괄수정</span></a>
+                    &nbsp;&nbsp;
+                    <select name="SetUnitYN">
+                        <option value="N">세트하위상품미포함</option>
+                        <option value="Y">세트하위상품포함</option>
+                    </select>
+                    <a href="javascript:downExcel('S');" class="btn-c"><span>선택상품 엑셀다운로드</span></a>
+                    <a href="javascript:downExcel('A');" class="btn-c"><span>검색조건 엑셀다운로드</span></a>
+                </div>
+            </th:block>
+            <table>
+                <colgroup>
+                    <col style="width:     2%;" />
+                    <col style="width:   65px;" />
+                    <col style="width:     6%;" />
+                    <col style="width:     6%;" />
+                    <col style="width:   auto;" />
+                    <col style="width:    10%;" />
+                    <col style="width:     8%;" />
+                    <col style="width:     8%;" />
+                    <col style="width:     7%;" />
+                    <col style="width:     7%;" />
+                    <col style="width:     7%;" />
+                    <col style="width:     5%;" />
+                    <col style="width:     5%;" />
+                    <col style="width:     5%;" />
+                </colgroup>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="AChk" id="AChk" /></th>
+                    <th>상품</th>
+                    <th>상품번호<br />상품구분</th>
+                    <th>ERP코드</th>
+                    <th>상품명</th>
+                    <th>규격</th>
+                    <th>가격</th>
+                    <th>재고</th>
+                    <th>등록일</th>
+                    <th>
+                        <select name="AOF" id="AOF">
+                            <option value="">품절여부</option>
+                            <option value="N">판매중</option>
+                            <option value="Y">품절</option>
+                        </select>
+                    </th>
+                    <th>
+                        <select name="ASS" id="ASS">
+                            <option value="">판매상태</option>
+                            <option value="Y">판매중</option>
+                            <option value="N">판매중지</option>
+                            <option value="P">게시안함</option>
+                            <option value="F">미사용</option>
+                        </select>
+                    </th>
+                    <th>수정</th>
+                    <th>복사</th>
+                    <th>쇼핑몰</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr style="background:#ffffff" th:each="product, loop : ${productList.getList()}">
+                    <td><input type="checkbox" name="ProductCode" th:value="${product.getProductcode()}" /></td>
+                    <td><img th:src="${product.getImgurl()}" style="width:60px;" /></td>
+                    <td>
+                        [[${product.getProductcode()}]]<br />
+                        [[${@commonUtil.getProductClassName(product.getProductclass())}]]
+                        <th:block th:if="${product.getTaxtype() == 'E'}">
+                            <br /><span class="pink">면세</span>
+                        </th:block>
+                    </td>
+                    <td th:text="${product.getItemNo()}"></td>
+                    <td class="al pl10">
+                        <a href="javascript:void(0);" th:if="${Permission.isWrite()}" th:data-productcode="${product.getProductcode()}" th:onclick="pop_Product(this.getAttribute('data-productcode'))" style="color:#0000ff" th:text="${product.getProductname()}"></a>
+                        <span th:unless="${Permission.isWrite()}" th:text="${product.getProductname()}"></span>
+                    </td>
+                    <td th:text="${product.getStandard()}"></td>
+                    <td>
+                        <span class="gray">정상가 : [[${#numbers.formatInteger(product.getTagprice(), 0, 'COMMA')}]]</span><br />
+                        <span class="blue">판매가 : [[${#numbers.formatInteger(product.getSaleprice(), 0, 'COMMA')}]]</span><br />
+                    </td>
+                    <td>
+                        <span class="gray lh14">재고:</span><span class="gray dp_ib w50 ar lh14" th:text="${#numbers.formatInteger(product.getStockqty(), 0, 'COMMA')}"></span><br />
+                        <span class="gray lh14">자사:</span><span class="red  dp_ib w50 ar lh14" th:text="${#numbers.formatInteger(product.getShopsaleqty(), 0, 'COMMA')}"><%=FormatNumber(oRs("ShopSaleQty") * -1, 0)%></span><br />
+                        <span class="gray lh14">외부:</span><span class="red  dp_ib w50 ar lh14" th:text="${#numbers.formatInteger(product.getOutsaleqty(), 0, 'COMMA')}"><%=FormatNumber(oRs("OutSaleQty") * -1, 0)%></span><br />
+                        <span class="gray lh14">잔여:</span><span class="blue dp_ib w50 ar lh14" th:text="${#numbers.formatInteger(product.getRestqty(), 0, 'COMMA')}"><%=FormatNumber(oRs("RestQty"), 0)%></span><br />
+                    </td>
+                    <td th:text="${#temporals.format(product.getCreatedt(), 'yyyy-MM-dd')}"></td>
+                    <td>
+                        <select name="OffFlag">
+                            <option value="N" th:selected="${product.getOffflag() == 'N' ? 'true' : 'false'}">판매중</option>
+                            <option value="Y" th:selected="${product.getOffflag() == 'Y' ? 'true' : 'false'}">품절</option>
+                        </select>
+
+                        <input type="hidden" name="DB_OffFlag" th:value="${product.getOffflag()}" />
+                    </td>
+                    <td>
+                        <select name="SaleState">
+                            <option value="Y" th:selected="${product.getSalestate() == 'Y' ? 'true' : 'false'}">판매중</option>
+                            <option value="N" th:selected="${product.getSalestate() == 'N' ? 'true' : 'false'}">판매중지</option>
+                            <option value="P" th:selected="${product.getSalestate() == 'P' ? 'true' : 'false'}">게시안함</option>
+                            <option value="F" th:selected="${product.getSalestate() == 'F' ? 'true' : 'false'}">미사용</option>
+                        </select>
+
+                        <input type="hidden" name="DB_SaleState" th:value="${product.getSalestate()}" />
+                    </td>
+                    <td><a th:if="${Permission.isWrite()}" th:data-index="${loop.index}" th:onclick="mod_OneSaleState(this.getAttribute('data-index'))" class="btn-c"><span>수정</span></a></td>
+                    <td>
+                        <a th:if="${Permission.isWrite() and (product.getProductclass() == 'P' or product.getProductclass() == 'N')}"
+                           th:href="|/product/product/add?productcode=${product.getProductcode()}|" class="btn-c"><span>복사</span></a>
+                    </td>
+                    <td>
+                        <a href ="#" target="_blank" class="btn-c"><span>PC</span></a>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+    <div class="posR" th:insert="/layout/paging" th:if="${searchDto.getPagination() != null}"></div>
+
+    <script type="text/javascript">
+        $('#sdate').datepicker($.datepicker.regional['ko']);
+        $('#edate').datepicker($.datepicker.regional['ko']);
+    </script>
+
+    <script type="text/javascript">
+        /* 전체체크박스 */
+        $("#AChk").click(function () {
+            if ($("#AChk").prop("checked")) {
+                $("input:checkbox[name='ProductCode']").prop("checked", true);
+            } else {
+                $("input:checkbox[name='ProductCode']").prop("checked", false);
+            }
+        });
+
+        /* 품절여부 선택 */
+        $("#AOF").change(function () {
+            var chgVal = $(this).val();
+            $("select[name='OffFlag'] option:selected").each(function (idx) {
+                if (chgVal == "") {
+                    $("select[name='OffFlag']").eq(idx).val($("input[name='DB_OffFlag']").eq(idx).val());
+                }
+                else {
+                    $("select[name='OffFlag']").eq(idx).val(chgVal);
+                }
+            });
+        });
+
+        /* 판매상태 선택 */
+        $("#ASS").change(function () {
+            var chgVal = $(this).val();
+            $("select[name='SaleState'] option:selected").each(function (idx) {
+                if (chgVal == "") {
+                    $("select[name='SaleState']").eq(idx).val($("input[name='DB_SaleState']").eq(idx).val());
+                }
+                else {
+                    $("select[name='SaleState']").eq(idx).val(chgVal);
+                }
+            });
+        });
+
+        /* 판매구분 */
+        $("input[name='salestate']").click(function () {
+            if ($(this).val() == "0") {
+                $("input[name='salestate']").prop("checked", false);
+                $("input[name='salestate']").eq(0).prop("checked", true);
+            }
+            else {
+                $("input[name='salestate']").eq(0).prop("checked", false);
+                if ($("input[name='salestate']:checked").length == 0) { $("input[name='salestate']").eq(0).prop("checked", true); }
+            }
+        });
+
+        /* 상품구분 */
+        $("input[name='productclass']").click(function () {
+            if ($(this).val() == "0") {
+                $("input[name='productclass']").prop("checked", false);
+                $("input[name='productclass']").eq(0).prop("checked", true);
+            }
+            else {
+                $("input[name='productclass']").eq(0).prop("checked", false);
+                if ($("input[name='productclass']:checked").length == 0) { $("input[name='productclass']").eq(0).prop("checked", true); }
+            }
+        });
+
+        $(function () {
+            $("select[name='SaleState']").each(function () {
+                if ($(this).val() == "Y") { $(this).css("background-color", "white"); }
+                else if ($(this).val() == "N") { $(this).css("background-color", "#dfb7b7"); }
+                else { $(this).css("background-color", "#b7b8df"); }
+            });
+            $("select[name='OffFlag']").each(function () {
+                if ($(this).val() == "N") { $(this).css("background-color", "white"); }
+                else { $(this).css("background-color", "#dfb7b7"); }
+            });
+
+            $("select[name='SaleState']").on("change", function () {
+                if ($(this).val() == "Y") { $(this).css("background-color", "white"); }
+                else if ($(this).val() == "N") { $(this).css("background-color", "#dfb7b7"); }
+                else { $(this).css("background-color", "#b7b8df"); }
+            });
+            $("select[name='OffFlag']").on("change", function () {
+                if ($(this).val() == "N") { $(this).css("background-color", "white"); }
+                else { $(this).css("background-color", "#dfb7b7"); }
+            });
+        });
+    </script>
+
+</div>

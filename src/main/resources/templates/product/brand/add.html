@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/product/brand.js(ver=${@commonUtil.getNow()})}"></script>
+
+    <div class="tb_layout_1">
+        <form name="form" method="post" enctype="multipart/form-data" th:action="|/product/brand/add|">
+            <table>
+                <colgroup>
+                    <col style="width: 180px;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span class="required">브랜드코드</span></td>
+                    <td><input type="text" name="brandCode" id="BrandCode" maxlength="4" value="" class="input_text" style="width: 150px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span class="required">브랜드명</span></td>
+                    <td><input type="text" name="brandName" id="BrandName" maxlength="25" value="" class="input_text" style="width: 300px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span>브랜드 로고</span></td>
+                    <td><input type="file" name="logoImg" id="LogoImg" class="input_text" style="width: 80%;" accept=".jpg,.png,.gif,.jpeg" /> 189 x 50px</td>
+                </tr>
+                <tr>
+                    <td class="title"><span>브랜드 비주얼</span></td>
+                    <td><input type="file" name="visualImg" id="VisualImg" class="input_text" style="width: 80%;" accept=".jpg,.png,.gif,.jpeg" /> 0000 x 000px</td>
+                </tr>
+                <tr>
+                    <td class="title"><span>모바일 브랜드로고</span></td>
+                    <td><input type="file" name="mlogoImg" id="MLogoImg" class="input_text" style="width: 80%;" accept=".jpg,.png,.gif,.jpeg" /> 189 x 50px</td>
+                </tr>
+                <tr>
+                    <td class="title"><span>모바일 브랜드 비주얼</span></td>
+                    <td><input type="file" name="mvisualImg" id="MVisualImg" class="input_text" style="width: 80%;" accept=".jpg,.png,.gif,.jpeg" /> 000 x 000px</td>
+                </tr>
+                <tr>
+                    <td class="title"><span>브랜드 소개글</span></td>
+                    <td><input type="text" name="brandStory" id="BrandStory"  value="" class="input_text" style="width: 80%;" accept=".jpg,.png,.gif,.jpeg" /></td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <div class="posR mt20">
+        <div class="ac">
+            <a th:if="${Permission.isWrite()}" href="javascript:ins_Brand()" class="btn-c"><span>입력</span></a>
+            <a href="/product/brand/list" class="btn-d"><span>목록</span></a>
+        </div>
+    </div>
+
+</div>

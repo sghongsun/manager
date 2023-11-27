@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.sghong.manager.app.product.mapper.BrandMapper">
+    <select id="select_by_list_for_totalcount" parameterType="brandSearchDto" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+                        IFNULL(COUNT(idx), 0) as totalcount
+        from            products_brand
+        <where>
+            <include refid="brand_search" />
+        </where>
+        ;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_list_for_search" parameterType="brandSearchDto" resultType="brandDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+                        idx, brandcode, brandname, logoimg, useflag
+        from            products_brand
+        <where>
+            <include refid="brand_search" />
+        </where>
+        order by        idx desc
+        limit           #{pagination.limitStart}, #{recordsize};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <sql id="brand_search">
+        <if test="useflag != null">
+            <choose>
+                <when test='useflag.equals("Y")'>
+                    and useflag = 'Y'
+                </when>
+                <when test='useflag.equals("N")'>
+                    and useflag = 'N'
+                </when>
+            </choose>
+        </if>
+        <if test='keyword != null and keyword != ""'>
+            <choose>
+                <when test='searchtype.equals("brandname")'>
+                    and brandname LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test='searchtype.equals("brandcode")'>
+                    and brandcode LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <select id="select_by_brandcode_for_exists">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(COUNT(idx), 0)
+        from        products_brand
+        where       brandcode = #{brandCode};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_by_displaynum_max">
+        set session transaction isolation level read uncommitted;
+
+        select
+                    IFNULL(MAX(displaynum), 0) + 1
+        from        products_brand;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <insert id="insert_brand" parameterType="brandDTO">
+        insert into
+            products_brand (
+            brandcode,
+            brandname,
+            logoimg,
+            visualimg,
+            mlogoimg,
+            mvisualimg,
+            brandstory,
+            displaynum,
+            createid,
+            createip
+        ) values (
+                     #{brandcode},
+                     #{brandname},
+                     #{logoimg},
+                     #{visualimg},
+                     #{mlogoimg},
+                     #{mvisualimg},
+                     #{brandstory},
+                     #{displaynum},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <select id="select_by_brandcode" resultType="brandDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            brandcode, brandname, logoimg, visualimg, mlogoimg, mvisualimg, brandstory, useflag, displaynum
+        from            products_brand
+        where           brandcode = #{brandCode};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_brand" parameterType="brandDto">
+        update products_brand set
+                                  brandname = #{brandname},
+                                  logoimg = #{logoimg},
+                                  visualimg = #{visualimg},
+                                  mlogoimg = #{mlogoimg},
+                                  mvisualimg = #{mvisualimg},
+                                  brandstory = #{brandstory},
+                                  useflag = #{useflag},
+                                  updateid = #{createid},
+                                  updateip = #{createip}
+        where brandcode = #{brandcode}
+    </update>
+
+    <update id="update_brand_useflag" parameterType="brandDto">
+        update products_brand set
+                                  useflag = #{useflag},
+                                  updateid = #{createid},
+                                  updateip = #{createip}
+        where brandcode = #{brandcode}
+    </update>
+
+    <select id="select_by_list_for_all" resultType="brandDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            brandcode, brandname, useflag, displaynum
+        from        products_brand
+        order by    displaynum asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_brand_for_displaynum_up" resultType="brandDTO">
+        set session transaction isolation level read uncommitted;
+
+        select
+            brandcode, displaynum
+        from        products_brand
+        where       displaynum <![CDATA[<]]> #{displayNum}
+        order by    displaynum desc
+            limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_brand_for_displaynum_dn" resultType="brandDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            brandcode, displaynum
+        from        products_brand
+        where       displaynum <![CDATA[>]]> #{displayNum}
+        order by    displaynum asc
+            limit       1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_brand_displaynum" parameterType="brandDto">
+        update products_brand set
+                                  displaynum = #{displaynum},
+                                  updateid = #{createid},
+                                  updateip = #{createip}
+        where brandcode = #{brandcode}
+    </update>
+
+    <update id="update_brand_for_displaynum_first" parameterType="brandDto">
+        update products_brand set
+                                  displaynum = 1,
+                                  updateid = #{createid},
+                                  updateip = #{createip}
+        where brandcode = #{brandcode};
+
+        update products_brand set
+                                  displaynum = displaynum + 1,
+                                  updateid = #{createid},
+                                  updateip = #{createip}
+        where brandcode != #{brandcode}
+          and   displaynum <![CDATA[<]]> #{displaynum};
+    </update>
+
+    <update id="update_brand_for_displaynum_last" parameterType="brandDto">
+        update products_brand set
+                                  displaynum = (select a.maxdisplaynum from (select MAX(displaynum) as maxdisplaynum from products_brand) as a),
+                                  updateid = #{createid},
+                                  updateip = #{createip}
+        where brandcode = #{brandcode};
+
+        update products_brand set
+                                  displaynum = displaynum - 1,
+                                  updateid = #{createid},
+                                  updateip = #{createip}
+        where brandcode != #{brandcode}
+          and   displaynum <![CDATA[>]]> #{displaynum};
+    </update>
+</mapper>
