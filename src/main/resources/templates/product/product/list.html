@@ -38,11 +38,8 @@
                         <td>
                             <select name="releasecentercode" id="SReleaseCenterCode" class="input_text">
                                 <option value="">전체</option>
-                                <option th:each="releasecenter : ${releasecentercodelist}" th:value="${releasecenter.getReleasecentercode()}" th:text="${releasecenter.getReleasecentername()}"></option>
+                                <option th:each="releasecenter : ${releasecenterList}" th:value="${releasecenter.getReleasecentercode()}" th:text="${releasecenter.getReleasecentername()}" th:select="${releasecenter.getReleasecentercode() == searchDto.getReleasecentercode() ? 'true' : 'false'}"></option>
                             </select>
-                            <script>
-                                $("#SReleaseCenterCode").val("[[${searchDto.getReleasecentercode()}]]");
-                            </script>
                         </td>
                     </tr>
                     <tr>
@@ -50,7 +47,7 @@
                         <td>
                             <select name="categorycode1" id="categorycode1" class="input_text" style="width:180px" onchange="chg_CategoryCode1();">
                                 <option value="">대분류 선택</option>
-                                <option th:each="category1 : ${category1list}" th:value="${category1.getCategorycode1()}" th:text="${category1.getCategoryname1()}"></option>
+                                <option th:each="category1 : ${category1List}" th:value="${category1.getCategorycode1()}" th:text="${category1.getCategoryname1()}"></option>
                             </select>
                             <script>
                                 $("#categorycode1").val(`[[${searchDto.getCategorycode1()}]]`);
@@ -58,7 +55,7 @@
                             &nbsp;
                             <select name="categorycode2" id="categorycode2" class="input_text" style="width:180px">
                                 <option value="">소분류 선택</option>
-                                <option th:each="category2 : ${category2list}" th:value="${category2.getCategorycode2()}" th:text="${category2.getCategoryname2()}"></option>
+                                <option th:each="category2 : ${category2List}" th:value="${category2.getCategorycode2()}" th:text="${category2.getCategoryname2()}"></option>
                             </select>
                             <script>
                                 $("#categorycode2").val('[[${searchDto.getCategorycode2()}]]');
@@ -104,7 +101,7 @@
                         <td colspan="3">
                             <select name="SBrandCode" id="SBrandCode">
                                 <option value="">브랜드</option>
-                                <option th:each="brand : ${brandlist}" th:value="${brand.getBrandcode()}" th:text="${brand.getBrandname()}" th:style="${brand.getUseflag() == 'N' ? 'background:#d8d8d8' : ''}"></option>
+                                <option th:each="brand : ${brandList}" th:value="${brand.getBrandcode()}" th:text="${brand.getBrandname()}" th:style="${brand.getUseflag() == 'N' ? 'background:#d8d8d8' : ''}"></option>
 
                             </select>
                             <script>
@@ -113,7 +110,7 @@
 
                             <select name="producttype" id="SProductType">
                                 <option value="">고시정보</option>
-                                <option th:each="gosi : ${gosilist}" th:value="${gosi.getCode1()}" th:text="${gosi.getName1()}"></option>
+                                <option th:each="gosi : ${gosiList}" th:value="${gosi.getCode1()}" th:text="${gosi.getName1()}"></option>
                             </select>
                             <script>
                                 $("#SProductType").val(`[[${searchDto.getProducttype()}]]`);

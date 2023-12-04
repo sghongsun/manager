@@ -5,8 +5,7 @@ import me.sghong.manager.app.common.dto.SearchDto;
 import org.apache.ibatis.type.Alias;
 
 @Alias("productSearchDto")
-@Getter
-@AllArgsConstructor
+@Data
 public class ProductSearchDto extends SearchDto {
     private String usedate;
     private String datetype;
@@ -28,6 +27,14 @@ public class ProductSearchDto extends SearchDto {
     private String fixdelvflag;
     private String freedelvflag;
     private String orderby;
-    @Setter
     private String[] keywords;
+
+    public ProductSearchDto() {
+        datetype = "C";
+        productclass = new String[] {"0"};
+        orderby = "0";
+        salestate = new String[] {"0"};
+        setSearchtype("productname");
+        setRecordsize(20);
+    }
 }

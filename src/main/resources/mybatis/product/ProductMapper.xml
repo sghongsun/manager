@@ -134,7 +134,7 @@
         a.createdt
     </sql>
 
-    <select id="select_by_list_for_totalcount" parameterType="hashmap" resultType="int">
+    <select id="select_product_by_list_for_totalcount" parameterType="hashmap" resultType="int">
         set session transaction isolation level read uncommitted;
 
         select
@@ -151,7 +151,7 @@
         set session transaction isolation level repeatable read;
     </select>
 
-    <select id="select_by_list" parameterType="hashmap" resultType="productListDto">
+    <select id="select_product_by_list" parameterType="hashmap" resultType="productListDto">
         set session transaction isolation level read uncommitted;
 
         select
@@ -299,4 +299,27 @@
             </otherwise>
         </choose>
     </sql>
+
+    <select id="select_releasecenter_by_list_for_use" resultType="releasecenterDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            releasecentercode, releasecentername
+        from        products_releasecenter
+        where       useflag = 'Y';
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_gosi_category1_by_list_for_use" resultType="productGosiCategoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            code1, name1
+        from        products_gosi_category1
+        where       useflag = 'Y';
+
+        set session transaction isolation level repeatable read;
+    </select>
+
 </mapper>
