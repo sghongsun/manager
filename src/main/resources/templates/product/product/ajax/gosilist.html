@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<table>
+    <colgroup>
+        <col style="width: 15%;" />
+        <col style="width: auto;" />
+    </colgroup>
+    <tbody>
+    <tr th:each="gosi, loop : ${gosicategoryList}">
+        <td class="title"><span th:text="${gosi.getName2()}"></span></td>
+        <td>
+            <textarea name="gosi" th:id="|Gosi${loop.index+1}|" class="input_text" style="width:90%;height:50px;">[[${gosi.getContents()}]]</textarea>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<input type="hidden" name="GosiCnt" th:value="${gosicategoryList.size()}" />

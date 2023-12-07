@@ -55,7 +55,7 @@ function mod_SelSaleState() {
         $.ajax({
             url			 : "/product/product/ajax/statemodify",
             method		 : "POST",
-            data		 : "ProductCode=" + productCodes + "&OffFlag=" + offFlags + "&SaleState=" + saleStates,
+            data		 : "productCode=" + productCodes + "&offFlag=" + offFlags + "&saleState=" + saleStates,
             beforeSend: function(xhr){
                 xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
             },
@@ -88,7 +88,7 @@ function mod_OneSaleState(num) {
     $.ajax({
         url			 : "/product/product/ajax/statemodify",
         method		 : "POST",
-        data		 : "ProductCode=" + productCode + "&OffFlag=" + offFlag + "&SaleState=" + saleState,
+        data		 : "productCode=" + productCode + "&offFlag=" + offFlag + "&saleState=" + saleState,
         beforeSend: function(xhr){
             xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
         },
@@ -117,7 +117,7 @@ function chg_PBType(productCode) {
 
     $.ajax({
         url			 : "/product/product/ajax/gosiinfo",
-        method		 : "POST",
+        method		 : "post",
         data		 : "ProductCode=" + productCode + "&ProductType=" + productType,
         beforeSend: function(xhr){
             xhr.setRequestHeader($("meta[name='_csrf_header']").attr('content'), $("meta[name='_csrf']").attr('content'));
@@ -376,7 +376,7 @@ function ins_Product() {
         openPop('loading');
 
         oEditors.getById["description"].exec("UPDATE_IR_FIELD", []);
-        document.form.action = "/product/product/addok";
+        document.form.action = "/product/product/add";
         document.form.submit();
     }
 }

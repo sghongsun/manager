@@ -61,7 +61,7 @@ function chg_CategoryCode1() {
 	if (sCode1 != "") {
 		$.ajax({
 			type: "get",
-			url: "/product/category/ajax/list2",
+			url: "/common/ajax/category2list",
 			async: false,
 			data: "categorycode1=" + sCode1,
 			dataType: "text",

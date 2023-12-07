@@ -1,13 +1,13 @@
 package me.sghong.manager.app.product.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.apache.ibatis.type.Alias;
 
+@Alias("productDto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class ProductDto {
     private int productcode;
     private String itemNo;
@@ -24,9 +24,13 @@ public class ProductDto {
     private int costprice;
     private int agencyprice;
     private int tagprice;
+    @Setter
     private int saleprice;
+    @Setter
     private int empprice;
+    @Setter
     private int bizprice;
+    @Setter
     private int qty;
     private int minsalecnt;
     private int maxsalecnt;

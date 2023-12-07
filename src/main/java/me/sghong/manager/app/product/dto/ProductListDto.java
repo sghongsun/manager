@@ -1,18 +1,18 @@
 package me.sghong.manager.app.product.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.apache.ibatis.type.Alias;
 
 import java.time.LocalDateTime;
 
+@Alias("productListDto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ProductListDto extends ProductDto {
     private String brandname;
     private String imgurl;
+    @Setter
     private String standardflag;
     private int stock;
     private int stockqty;

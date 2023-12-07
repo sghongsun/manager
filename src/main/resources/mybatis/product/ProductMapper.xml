@@ -322,4 +322,321 @@
         set session transaction isolation level repeatable read;
     </select>
 
+    <select id="select_product_gosi_category1_by_code1" resultType="productGosiCategoryDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            code1, name1
+        from        products_gosi_category1
+        where       code1 = #{code1};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_gosi_category2_by_code1_for_count" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+            IFNULL(COUNT(code1), 0)
+        from        products_gosi_category2
+        where       code1 = #{code1};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_gosi_category2_by_code1" resultType="productGosiDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            code1, code2, name2
+        from        products_gosi_category2
+        where       code1 = #{code1}
+        order by    code2 asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_products_gosi_by_productcode" resultType="productGosiDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            a.code1, a.code2, a.name2, b.contents
+        from            products_gosi_category2 as a
+                            left outer join products_gosi as b on a.code1 = b.code1 and a.code2 = b.code2
+        where           productcode = #{productCode}
+        order by        a.code2 asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <update id="update_product_by_productcode_for_state" parameterType="productDto">
+        update products set
+                            offflag = #{offflag},
+                            salestate = #{salestate},
+                            updateid = #{createid},
+                            updateip = #{createip}
+        where   productcode = #{productcode}
+    </update>
+
+    <select id="select_product_by_productcode" resultType="productDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+        <include refid="products_select_field" />
+        from    products as a
+        where   a.productcode = #{productCode};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_by_productcodesin" resultType="productListDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+        <include refid="products_select_field" />,
+        b.brandname,
+        ifnull((select imageurl from products_image as z where z.productcode = a.productcode and z.imageno = 1 and sizeclass='0060'), '') as imgurl
+        from            products as a
+        inner join      products_brand as b on a.brandcode = b.brandcode
+        <where>
+            <if test='productCode != null'>
+                and a.productcode in
+                <foreach collection="productCode" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by        a.productcode asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_by_itemNo" resultType="productDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+        productcode,
+        <include refid="products_field" />
+        from    products
+        where   item_no = #{itemNo};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <insert id="insert_product" parameterType="productDto" useGeneratedKeys="true" keyProperty="productcode" keyColumn="productcode">
+        insert into products (
+        <include refid="products_field" />,
+        createid,
+        createip
+        )
+        values (
+        case when #{productclass} = 'P' then #{itemNo} else #{productclass} end,
+        #{categorycode1},
+        #{categorycode2},
+        #{productclass},
+        #{marketingword},
+        #{productname},
+        #{standard},
+        #{productshortname},
+        #{onlineflag},
+        #{empflag},
+        #{bizflag},
+        #{costprice},
+        #{agencyprice},
+        #{tagprice},
+        #{saleprice},
+        #{empprice},
+        #{bizprice},
+        #{minsalecnt},
+        #{maxsalecnt},
+        #{offflag},
+        #{salestate},
+        #{brandcode},
+        #{keyword},
+        #{description},
+        #{fixdelvflag},
+        #{freedelvflag},
+        #{taxtype},
+        #{productkind},
+        #{producttype},
+        #{productgubn},
+        #{makeyear},
+        #{makedm},
+        #{maker},
+        #{origincode},
+        #{origin},
+        #{sex},
+        #{stockupflag},
+        #{releasecentercode},
+        #{releaseproductcode},
+        #{createid},
+        #{createip}
+        )
+    </insert>
+
+    <update id="update_product_by_productcode_for_itemno_set">
+        update products set
+            item_no = #{itemNo}
+        where productcode = #{productCode}
+    </update>
+
+    <insert id="insert_product_gosi" parameterType="productGosiDto">
+        insert into products_gosi (
+            productcode,
+            code1,
+            code2,
+            contents,
+            createid,
+            createip
+        )
+        values (
+                   #{productcode},
+                   #{code1},
+                   #{code2},
+                   #{contents},
+                   #{createid},
+                   #{createip}
+               )
+    </insert>
+
+    <insert id="insert_product_unit" parameterType="productUnitDto">
+        insert into products_unit (
+            productcode,
+            unitproductcode,
+            qty,
+            unitsaleprice,
+            unitempprice,
+            unitbizprice,
+            standardflag,
+            createid,
+            createip
+        ) values (
+                     #{productcode},
+                     #{unitproductcode},
+                     #{qty},
+                     #{unitsaleprice},
+                     #{unitempprice},
+                     #{unitbizprice},
+                     #{standardflag},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <insert id="insert_product_stock" parameterType="productStockDto">
+        insert into products_stock (
+            productcode,
+            item_no,
+            stockqty,
+            saleqty,
+            outsaleqty,
+            restqty,
+            createid,
+            createip
+        ) values (
+                     #{productcode},
+                     #{itemNo},
+                     #{stockqty},
+                     #{saleqty},
+                     #{outsaleqty},
+                     #{restqty},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <insert id="insert_product_image">
+        insert into products_image (
+            productcode,
+            imageno,
+            sizeclass,
+            imageurl,
+            createid,
+            createip
+        ) values (
+                     #{productcode},
+                     #{imageno},
+                     #{sizeclass},
+                     #{imageurl},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <delete id="delete_product_setproduct_temp_by_createid">
+        delete from products_setproduct_temp
+        where createid = #{createid}
+    </delete>
+
+    <insert id="insert_product_setproduct_temp_by_createid">
+        insert into products_setproduct_temp (
+            productcode,
+            qty,
+            createid,
+            createip
+        ) values (
+                     #{productCode},
+                     #{qty},
+                     #{createid},
+                     #{createip}
+                 )
+    </insert>
+
+    <select id="select_product_setproduct_temp_by_createid_for_count" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+            ifnull(count(*), 0)
+        from            products_setproduct_temp
+        where           createid = #{createid};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_setproduct_by_createid_for_dupcheck" resultType="productDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            a.productcode
+        from            products_unit as a
+                            inner join      (
+            select
+                z.productcode
+            from            products as z
+                                inner join      products_unit as y on z.productcode = y.productcode
+            where           z.productclass = 'S'
+            group by        z.productcode
+            having          count(*) = #{count}
+        ) as b on a.productcode = b.productcode
+                            inner join      products_setproduct_temp as c on c.createid = #{createid} and a.unitproductcode = c.productcode and a.qty = c.qty
+        group by        a.productcode
+        having          count(*) = #{count}
+            limit           1;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <insert id="insert_product_history_by_productcode">
+        insert into products_history (
+        productcode,
+        <include refid="products_field" />,
+        createid,
+        createip,
+        createdt,
+        updateid,
+        updateip,
+        updatedt
+        )
+        select
+        productcode,
+        <include refid="products_field" />,
+        createid,
+        createip,
+        createdt,
+        updateid,
+        updateip,
+        updatedt
+        from products
+        where productcode = #{productCode}
+    </insert>
 </mapper>

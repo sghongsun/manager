@@ -1,0 +1,309 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout_popup}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/product/product.js(ver=${@commonUtil.getNow()})}"></script>
+
+    <h3 class="h3">
+        <span>묶음 상품 선택</span>
+    </h3>
+
+    <table style="width:100%">
+        <colgroup>
+            <col style="width:50%" />
+            <col style="width: 1%" />
+            <col style="width:49%" />
+        </colgroup>
+        <tbody>
+        <tr>
+            <td style="vertical-align:top">
+                <form name="form" method="post" id="SetForm" th:action="|/product/product/popup/groupproductadd|" onsubmit="return true" autocomplete="off">
+                    <input type="hidden" name="page"				 th:value="${searchDto.getPage()}"				 />
+                    <input type="hidden" name="productcodes"		 th:value="${searchDto.getProductcodes()}"		 />
+                    <input type="hidden" name="standardflags"		 th:value="${searchDto.getStandardflags()}"	 />
+                    <div class="filterArea">
+                        <div class="tb_layout_1">
+                            <table>
+                                <colgroup>
+                                    <col style="width: 120px;" />
+                                    <col style="width: 330px;" />
+                                    <col style="width: 120px;" />
+                                    <col style="width: auto;" />
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td class="title">분류</td>
+                                    <td>
+                                        <select name="categorycode1" id="categorycode1" class="input_text" onchange="chg_CategoryCode1();">
+                                            <option value="">대분류 선택</option>
+                                            <option th:each="category1 : ${category1List}" th:value="${category1.getCategorycode1()}" th:text="${category1.getCategoryname1()}" th:selected="${category1.getCategorycode1() == searchDto.getCategorycode1() ? 'true' : 'false'}"></option>
+                                        </select>
+                                        &nbsp;
+                                        <select name="categorycode2" id="categorycode2" class="input_text">
+                                            <option value="">소분류 선택</option>
+                                            <option th:each="category2 : ${category2List}" th:value="${category2.getCategorycode2()}" th:text="${category2.getCategoryname2()}" th:selected="${category2.getCategorycode2 == searchDto.getCategorycode2() ? 'true' : 'false'}"></option>
+                                        </select>
+                                    </td>
+                                    <td class="title">출고지</td>
+                                    <td>
+                                        <select name="releasecentercode" id="releasecentercode" class="input_text">
+                                            <option value="">전체</option>
+                                            <option th:each="releasecentercode : ${releasecentercodeList}" th:value="${releasecentercode.getReleasecentercode()}" th:text="${releasecentercode.getReleasecentername()}" th:selected="${releasecentercode.getReleasecentercode() == searchDto.releasecentercode ? 'true' : 'false'}"></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="title">판매구분</td>
+                                    <td>
+                                        <select name="salestate" id="SSaleState">
+                                            <option value="0">판매구분</option>
+                                            <option value="Y">판매중</option>
+                                            <option value="N">판매중지</option>
+                                            <option value="P">게시안함</option>
+                                        </select>
+                                        <script>
+                                            $("#SSaleState").val('[[${searchDto.getSalestate()[0]}]]');
+                                        </script>
+                                        <select name="offflag" id="SOffFlag">
+                                            <option value="">품절여부</option>
+                                            <option value="N">판매</option>
+                                            <option value="Y">품절</option>
+                                        </select>
+                                        <script>
+                                            $("#SOffFlag").val('[[${searchDto.getOffflag()}]]');
+                                        </script>
+                                    </td>
+                                    <td class="title">브랜드</td>
+                                    <td>
+                                        <select name="brandcode" id="SBrandCode">
+                                            <option value="">브랜드</option>
+                                            <option th:each="brand : ${brandList}" th:value="${brand.getBrandcode()}" th:text="${brand.getBrandname()}" th:selected="${brand.getBrandcode() == searchDto.getBrandcode() ? 'true' : 'false'}"></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="title">고시정보</td>
+                                    <td colspan="3">
+                                        <select name="producttype" id="SProductType">
+                                            <option value="">고시정보</option>
+                                            <option th:each="gosi : ${gosiList}" th:value="${gosi.getCode1()}" th:text="${gosi.getName1()}" th:selected="${gosi.getCode1() == searchDto.getProducttype() ? 'true' : 'false'}"></option>
+                                        </select>
+                                    </td>
+                                <tr>
+                                    <td class="title">검색조건</td>
+                                    <td colspan="3">
+                                        <div style="float:left; width:390px; height:100%;">
+                                            <select name="searchtype" id="SKinds">
+                                                <option value="productname">상품명</option>
+                                                <option value="productcode">상품코드</option>
+                                                <option value="itemno">ERP상품코드</option>
+                                            </select>
+                                            <script>
+                                                $("#SKinds").val('[[${searchDto.getSearchtype()}]]');
+                                            </script>
+                                            <textarea name="keyword" id="SWord" style="width:250px; height:60px;vertical-align:top;">[[${searchDto.getKeyword()}]]</textarea>
+                                        </div>
+                                        <div style="padding-top:45px;">
+                                            <a href="javascript:document.form.submit();" class="btn-c"><span>검색</span></a> &nbsp;
+                                            <a href="javascript:group_product_list_Reset()" class="btn-d"><span>리스트</span></a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </form>
+
+                <div class="tb_data_1">
+                    <div class="tip" th:if="${searchDto.getPagination() != null}" th:text="'[전체 ' + ${#numbers.formatInteger(searchDto.getPagination().getTotalRecordCount(),0,'COMMA') + ' 건]'}"></div>
+                    <div class="tip" th:if="${searchDto.getPagination() == null}" th:text="'[전체 0 건]'"></div>
+                    <div class="btnRight3">
+                        <a href="javascript:group_add_SelProduct();" class="btn-c"><span>일괄추가하기</span></a>
+                    </div>
+                    <table>
+                        <colgroup>
+                            <col style="width:   2%;" />
+                            <col style="width:   6%;" />
+                            <col style="width:   9%;" />
+                            <col style="width: auto;" />
+                            <col style="width:  10%;" />
+                            <col style="width:  10%;" />
+                            <col style="width:  10%;" />
+                            <col style="width:  10%;" />
+                            <col style="width:   7%;" />
+                            <col style="width:   7%;" />
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" name="AChk" id="AChk" /></th>
+                            <th>상품</th>
+                            <th>상품코드<br />ERP코드</th>
+                            <th>상품명<br />규격</th>
+                            <th>정상가<br />판매가</th>
+                            <th>총판매가</th>
+                            <th>총임직원가</th>
+                            <th>총사업자가</th>
+                            <th>수량</th>
+                            <th>추가</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product, loop : ${productList.getList()}">
+                            <td>
+                                <input type="checkbox"	 name="ProductCode"		 th:id="|ProductCode${loop.index+1}|"	 th:value="${product.getProductcode()}"	 />
+                                <input type="hidden"	 name="UnitCostPrice"	 th:id="|UnitCostPrice${loop.index+1}|"	 th:value="${product.getCostprice()}"	 />
+                                <input type="hidden"	 name="UnitAgencyPrice"	 th:id="|UnitCostPrice${loop.index+1}|"	 th:value="${product.getAgencyprice()}"	 />
+                                <input type="hidden"	 name="UnitTagPrice"	 th:id="|UnitTagPrice${loop.index+1}|"	 th:value="${product.getTagprice()}"	 />
+                            </td>
+                            <td><img th:src="${product.getImgurl()}" style="width:40px;" /></td>
+                            <td>
+                                [[${product.getProductcode()}]]<br />
+                                <span class="blue" th:text="${product.getItemNo()}"></span>
+                            </td>
+                            <td class="al pl10">
+                                [[${product.getProductname()}]]
+                                <th:block th:if="${product.getStandard() != null}">
+                                    <br />[[${product.getStandard()}]]
+                                </th:block>
+                            </td>
+                            <td class="ar pr10">[[${#numbers.formatInteger(product.getTagprice(), 0, 'COMMA')}]]<br />[[${#numbers.formatInteger(product.getSaleprice(), 0, 'COMMA')}]]</td>
+                            <td>
+                                <input type="text" name="UnitSalePrice" th:value="${product.getSaleprice()}" maxlength="7" style="width:80%;text-align:right;" />
+                            </td>
+                            <td>
+                                <input type="text" name="UnitEmpPrice" th:value="${product.getEmpprice()}" maxlength="7" style="width:80%;text-align:right;" />
+                            </td>
+                            <td>
+                                <input type="text" name="UnitBizPrice" th:value="${product.getBizprice()}" maxlength="7" style="width:80%;text-align:right;" />
+                            </td>
+                            <td>
+                                <input type="text" name="UnitQty" value="1" maxlength="4" style="width:50%;text-align:center;" />
+                            </td>
+                            <td>
+                                <a th:data-index="${loop.index}" th:onclick="group_add_OneProduct(this.getAttribute('data-index'))" class="btn-c"><span>추가</span></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="posR" th:if="${searchDto.getPagination() != null}">
+                    <div class="paging pgDown">
+                        <th:block th:if="${searchDto.getPagination().isExistPrevPage()}">
+                            <a th:data-page="${searchDto.getPagination().getStartPage() - searchDto.getPagesize()}" href="javascript:void(0);" th:onclick="group_product_add_list_Product(this.getAttribute('data-page'))">◀</a>
+                        </th:block>
+                        <th:block th:unless="${searchDto.getPagination().isExistPrevPage()}">
+                            <a>◀</a>
+                        </th:block>
+
+                        <th:block th:each="i : ${#numbers.sequence(searchDto.getPagination().getStartPage(), searchDto.getPagination().getEndPage())}">
+                            <th:block th:if="${i < searchDto.getPagination().getEndPage()}">
+                                <span><a th:data-page="${i}" href="javascript:void(0);" th:onclick="group_product_add_list_Product(this.getAttribute('data-page'))" th:text="${i}" th:class="${i == searchDto.getPage()} ? 'on' : ''"></a></span>
+                            </th:block>
+                            <th:block th:unless="${i < searchDto.getPagination().getEndPage()}">
+                                <a th:data-page="${i}" href="javascript:void(0);" th:onclick="group_product_add_list_Product(this.getAttribute('data-page'))" th:text="${i}" th:class="${i == searchDto.getPage()} ? 'on' : ''"></a>
+                            </th:block>
+                        </th:block>
+
+                        <th:block th:if="${searchDto.getPagination().isExistNextPage()}">
+                            <a th:data-page="${searchDto.getPagination().getEndPage() + 1}" href="javascript:void(0);" th:onclick="group_product_add_list_Product(this.getAttribute('data-page'))">▶</a>
+                        </th:block>
+                        <th:block th:unless="${searchDto.getPagination().isExistNextPage()}">
+                            <a>▶</a>
+                        </th:block>
+                    </div>
+                </div>
+
+            </td>
+            <td></td>
+            <td id="TempProductList" style="vertical-align:top;">
+                <div class="tb_data_1" style="margin-top:0px !important">
+                    <table>
+                        <colgroup>
+                            <col style="width:   5%;" />
+                            <col style="width:  10%;" />
+                            <col style="width: auto;" />
+                            <col style="width:  10%;" />
+                            <col style="width:  10%;" />
+                            <col style="width:  10%;" />
+                            <col style="width:  10%;" />
+                            <col style="width:   5%;" />
+                            <col style="width:   8%;" />
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>상품</th>
+                            <th>상품코드<br />ERP코드</th>
+                            <th>상품명<br />규격</th>
+                            <th>정상가</th>
+                            <th>판매가</th>
+                            <th>임직원가</th>
+                            <th>사업자가</th>
+                            <th>기준<br />상품</th>
+                            <th>추가</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${searchDto.getProductcodes() == null}">
+                            <td colspan="10">선택된 상품이 없습니다.</td>
+                        </tr>
+                        <tr th:each="product : ${productAddList}">
+                            <td><img th:src="${product.getImgurl()}" style="width:40px;" /></td>
+                            <td>
+                                [[${product.getProductcode()}]]<br />
+                                <span class="blue">[[${product.getItemNo()}]]</span>
+                            </td>
+                            <td class="al pl10">
+                                [[${product.getProductname()}]]
+                                <th:block th:if="${product.getStandard() != null}">
+                                    <br />[[${product.getStandard()}]]
+                                </th:block>
+                            </td>
+                            <td class="ar pr10" th:text="${#numbers.formatInteger(product.getTagprice(), 0, 'COMMA')}"></td>
+                            <td class="ar pr10" th:text="${#numbers.formatInteger(product.getSaleprice(), 0, 'COMMA')}"></td>
+                            <td class="ar pr10" th:text="${#numbers.formatInteger(product.getEmpprice(), 0, 'COMMA')}"></td>
+                            <td class="ar pr10" th:text="${#numbers.formatInteger(product.getBizprice(), 0, 'COMMA')}"></td>
+                            <td>
+                                <input type="checkbox" name="StandardFlag" />
+                                <input type="hidden" name="Prices" th:value="|${product.getCostprice()+'|'+product.getAgencyprice()+'|'+product.getTagprice()+'|'+product.getSaleprice()+'|'+product.getEmpprice()+'|'+product.getBizprice()}|" />
+                            </td>
+                            <td>
+                                <a th:data-productcode="${product.getProductcode()}" th:onclick="group_del_OneProduct(this.getAttribute('data-productcode'))" class="btn-c"><span>삭제</span></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="posR mt20 mb20">
+                    <div class="ac">
+                        <a href="javascript:group_apply_Product();" class="btn-c"><span>적용</span></a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <script type="text/javascript">
+        /* 전체체크박스 */
+        $("#AChk").click(function () {
+            if ($("#AChk").prop("checked")) {
+                $("input:checkbox[name=ProductCode]").prop("checked", true);
+            } else {
+                $("input:checkbox[name=ProductCode]").prop("checked", false);
+            }
+        });
+
+        $("input:checkbox[name='standardflag']").on("click", function () {
+            var idx = $("input:checkbox[name='standardflag']").index(this);
+            if ($(this).is(":checked") == true) {
+                $("input:checkbox[name='standardflag']").prop("checked", false);
+                $(this).prop("checked", true);
+            }
+        });
+    </script>
+</div>

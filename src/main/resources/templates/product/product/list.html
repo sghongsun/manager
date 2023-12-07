@@ -303,7 +303,7 @@
                     <td><a th:if="${Permission.isWrite()}" th:data-index="${loop.index}" th:onclick="mod_OneSaleState(this.getAttribute('data-index'))" class="btn-c"><span>수정</span></a></td>
                     <td>
                         <a th:if="${Permission.isWrite() and (product.getProductclass() == 'P' or product.getProductclass() == 'N')}"
-                           th:href="|/product/product/add?productcode=${product.getProductcode()}|" class="btn-c"><span>복사</span></a>
+                           th:href="|/product/product/copy?productcode=${product.getProductcode()}|" class="btn-c"><span>복사</span></a>
                     </td>
                     <td>
                         <a href ="#" target="_blank" class="btn-c"><span>PC</span></a>

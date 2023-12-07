@@ -1,0 +1,53 @@
+OK|||||
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<table class="tb_data_1 embed" style="width:890px;margin-top:5px !important">
+    <colgroup>
+        <col style="width:  40px;">
+        <col style="width: 100px;">
+        <col style="width: auto;">
+        <col style="width: 100px;">
+        <col style="width: 100px;">
+        <col style="width: 100px;">
+        <col style="width: 100px;">
+        <col style="width:  50px;">
+    </colgroup>
+    <thead>
+    <tr>
+        <th>상품</th>
+        <th>상품코드<br />ERP코드</th>
+        <th>상품명<br />규격</th>
+        <th>정상가<br />판매가</th>
+        <th>총판매가</th>
+        <th>총임직원가</th>
+        <th>총사업자가</th>
+        <th>수량</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${productAddList}">
+        <td><img th:src="${product.getImgurl()}" style="width:40px;" /></td>
+        <td>
+            [[${product.getProductcode()}]]<br />
+            <span class="blue">[[${product.getItemNo()}]]</span>
+        </td>
+        <td class="al pl10">
+            [[${product.getProductname()}]]
+            <th:block th:if="${product.getStandard() != null}">
+                <br />[[${product.getStandard()}]]
+            </th:block>
+        </td>
+        <td class="ar pr10">[[${#numbers.formatInteger(product.getTagprice(), 0, 'COMMA')}]]<br />[[${#numbers.formatInteger(product.getSaleprice(), 0, 'COMMA')}]]</td>
+        <td class="ar pr10" th:text="${#numbers.formatInteger(product.getSaleprice(), 0, 'COMMA')}"></td>
+        <td class="ar pr10" th:text="${#numbers.formatInteger(product.getEmpprice(), 0, 'COMMA')}"></td>
+        <td class="ar pr10" th:text="${#numbers.formatInteger(product.getBizprice(), 0, 'COMMA')}"></td>
+        <td th:text="${product.getQty()}"></td>
+    </tr>
+    <tr>
+        <td colspan="8">
+            정상가 : [[${#numbers.formatInteger(TotalTagPrice, 0, 'COMMA')}]] / 판매가 : [[${#numbers.formatInteger(TotalSalePrice, 0, 'COMMA')}]] / 임직원가 : [[${#numbers.formatInteger(TotalEmpPrice, 0, 'COMMA')}]] / 사업자가 : [[${#numbers.formatInteger(TotalBizPrice, 0, 'COMMA')}]]
+        </td>
+    </tr>
+    </tbody>
+</table>
+|||||[[${TotalCostPrice}]]|||||[[${TotalAgencyPrice}]]|||||[[${TotalTagPrice}]]|||||[[${TotalSalePrice}]]|||||[[${TotalEmpPrice}]]|||||[[${TotalBizPrice}]]|||||[[${Taxtype}]]|||||[[${Releasecentercode}]]

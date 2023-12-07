@@ -7,6 +7,8 @@ import me.sghong.manager.app.common.dto.FileDto;
 import me.sghong.manager.app.common.request.MyMenuChoiceAddDeleteRequest;
 import me.sghong.manager.app.common.request.MyMenuChoiceDispNumUpdateRequest;
 import me.sghong.manager.app.common.service.MyMenuChoiceService;
+import me.sghong.manager.app.product.dto.CategoryDto;
+import me.sghong.manager.app.product.service.CategoryService;
 import me.sghong.manager.util.CommonUtil;
 import me.sghong.manager.util.FileUtil;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ import java.io.PrintWriter;
 @Controller
 public class CommonController {
     private final MyMenuChoiceService myMenuChoiceService;
+    private final CategoryService categoryService;
 
     @GetMapping("/login")
     public String login(
@@ -105,5 +108,28 @@ public class CommonController {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         out.println(myMenuChoiceService.deleteMyMenu(myMenuChoiceAddDeleteRequest));
+    }
+
+    @GetMapping("/common/ajax/category2list")
+    public void Category2List(
+            HttpServletResponse response,
+            @RequestParam String categorycode1
+    ) throws IOException {
+        StringBuilder Code = new StringBuilder();
+        StringBuilder Name = new StringBuilder();
+
+        for (CategoryDto categoryDto : categoryService.getCategory2List(categorycode1)) {
+            Code.append(categoryDto.getCategorycode2()).append(",");
+            Name.append(categoryDto.getCategoryname2()).append(",");
+        }
+
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        if (Code.isEmpty()) {
+            out.println("OK||||||||||");
+        } else {
+            out.println("OK|||||" + Code.deleteCharAt(Code.length() - 1).toString() + "|||||" + Name.deleteCharAt(Name.length() - 1).toString());
+        }
+        out.flush();
     }
 }

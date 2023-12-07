@@ -23,7 +23,7 @@
 <div class="wrap">
     <div class="headerW">
         <div class="header">
-            <h1 class="logo"><a href="/static"><img src="/images/admin_logo.png" style="height:25px;" alt="CREANWARP"></a></h1>
+            <h1 class="logo"><a href="#"><img src="/images/admin-logo.png"></a></h1>
             <ul class="gnb">
                 <li th:each="topmenu : ${Permission.getTopMenuList()}">
                     <a th:href="${topmenu.menuurl}" th:text="${topmenu.menuname}"></a>
@@ -32,7 +32,7 @@
             <ul class="topMenu">
                 <li><span class="name">[[${@commonUtil.getSession('adminid')}]]</span></li>
                 <li><a href="/logout">로그아웃</a></li>
-                <li><a href="https://www.cleanwrapmall.co.kr" target="_blank">E-SHOP</a></li>
+                <li><a href="https://www.naver.com" target="_blank">E-SHOP</a></li>
             </ul>
         </div>
     </div>

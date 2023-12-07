@@ -4,6 +4,7 @@ import lombok.*;
 import me.sghong.manager.app.common.dto.SearchDto;
 import org.apache.ibatis.type.Alias;
 
+@EqualsAndHashCode(callSuper = true)
 @Alias("productSearchDto")
 @Data
 public class ProductSearchDto extends SearchDto {

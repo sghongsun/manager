@@ -1,0 +1,350 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" src ="/SmartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/JS/Editor.js"></script>
+    <script type="text/javascript" th:src="@{/js/product/product.js(ver=${@commonUtil.getNow()})}"></script>
+
+    <div class="tb_layout_1">
+
+        <form name="form" method="post" th:action="|/product/product/add|" enctype="multipart/form-data" autocomplete="off">
+            <input type="hidden" name="Category2_Exist" value="Y" />
+            <input type="hidden" name="Category3_Exist" value="Y" />
+            <input type="hidden" name="Category4_Exist" value="Y" />
+
+            <input type="hidden" name="setproductcodes"		 id="SetProductCodes"		 />
+            <input type="hidden" name="setunitcostprices"	 id="SetUnitCostPrices"		 />
+            <input type="hidden" name="setunitagencyprices"	 id="SetUnitAgencyPrices"	 />
+            <input type="hidden" name="setunittagprices"	 id="SetUnitTagPrices"		 />
+            <input type="hidden" name="setunitsaleprices"	 id="SetUnitSalePrices"		 />
+            <input type="hidden" name="setunitempprices"	 id="SetUnitEmpPrices"		 />
+            <input type="hidden" name="setunitbizprices"	 id="SetUnitBizPrices"		 />
+            <input type="hidden" name="setunitqtys"			 id="SetUnitQtys"			 />
+
+            <input type="hidden" name="groupproductcodes"	 id="GroupProductCodes"		 />
+            <input type="hidden" name="groupstandardflags"	 id="GroupStandardFlags"	 />
+
+            <table>
+                <colgroup>
+                    <col style="width: 15%;" />
+                    <col style="width: 35%;" />
+                    <col style="width: 15%;" />
+                    <col style="width: 35%;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title"><span>온라인전용</span></td>
+                    <td>
+                        <label><input type="checkbox" name="onlineflag" value="Y" th:checked="${productDto.getOnlineflag() == 'Y' ? 'true' : 'false'}" />온라인 전용 상품</label>
+                    </td>
+                    <td class="title"><span>사업자전용</span></td>
+                    <td>
+                        <label><input type="checkbox" name="bizflag" value="Y" th:checked="${productDto.getBizflag() == 'Y' ? 'true' : 'false'}" />사업자 전용 상품</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>상품구분</span></td>
+                    <td>
+                        <label><input type="radio" name="productclass" value="P" th:checked="${productDto.getProductclass() == 'P' or productDto.getProductclass() == null ? 'true' : 'false'}" th:text="${@commonUtil.getProductClassName('P')}" /></label> &nbsp;
+                        <label><input type="radio" name="productclass" value="S" th:checked="${productDto.getProductclass() =='S' ? 'true' : 'false'}" th:text="${@commonUtil.getProductClassName('S')}" /></label> &nbsp;
+                        <label><input type="radio" name="productclass" value="G" th:checked="${productDto.getProductclass() == 'G' ? 'true' : 'false'}" th:text="${@commonUtil.getProductClassName('G')}" /></label> &nbsp;
+                    </td>
+                    <td class="title"><span>임직원전용</span></td>
+                    <td>
+                        <label><input type="checkbox" name="empflag" value="Y" th:checked="${productDto.getEmpflag() == 'Y' ? 'true' : 'false'}" />임직원 전용 상품</label>
+                    </td>
+                </tr>
+                <tr id="Public" th:style="${productDto.getProductclass() == 'P' or productDto.getProductclass() == null ? '' : 'display:none;'}">
+                    <td class="title required"><span>ERP 상품코드</span></td>
+                    <td colspan="3">
+                        <input type="text" name="itemNo" id="ITEM_NO" class="input_text" maxlength="10" style="width:100px;" value="" />
+                        <!--
+                        &nbsp;
+                        <a href="javascript:chk_ITEM_NO();" class="btn-d"><span>상품검색</span></a>
+                        //-->
+                    </td>
+                </tr>
+                <tr id="Set" th:style="${productDto.getProductclass() == 'S' ? '' : 'display:none;'}">
+                    <td class="title required"><span>세트상품</span></td>
+                    <td colspan="3">
+                        <a href="javascript:add_SG_Product('S');" id="SBTN" class="btn-d"><span>상품추가</span></a>
+                        <div id="SetProductList"></div>
+                    </td>
+                </tr>
+                <tr id="Group" th:style="${productDto.getProductclass() == 'G' ? '' : 'display:none;'}">
+                    <td class="title required"><span>묶음상품</span></td>
+                    <td colspan="3">
+                        <a href="javascript:add_SG_Product('G');" id="GBTN" class="btn-d"><span>상품추가</span></a>
+                        <div id="GroupProductList"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>상품분류</span></td>
+                    <td>
+                        <select name="categorycode1" id="categorycode1" class="input_text" style="width:180px" onchange="chg_CategoryCode1();">
+                            <option value="">대분류 선택</option>
+                            <option th:each="category1 : ${category1List}" th:value="${category1.getCategorycode1()}" th:text="${category1.getCategoryname1()}" th:selected="${productDto.getCategorycode1 == category1.getCategorycode1() ? 'true' : 'false'}"></option>
+                        </select>
+
+                        <select name="categorycode2" id="categorycode2" class="input_text" style="width:180px">
+                            <option value="">소분류 선택</option>
+                            <option th:each="category2 : ${category2List}" th:value="${category2.getCategorycode2()}" th:text="${category2.getCategoryname2()}" th:selected="${productDto.getCategorycode2 == category2.getCategorycode2() ? 'true' : 'false'}"></option>
+                        </select>
+                    </td>
+                    <td class="title">출고지</td>
+                    <td>
+                        <select name="releasecentercode" id="ReleaseCenterCode" class="input_text">
+                            <option value="">출고지 선택</option>
+                            <option th:each="releasecenter : ${releasecenterList}" th:value="${releasecenter.getReleasecentercode()}" th:text="${releasecenter.getReleasecentername()}" th:selected="${productDto.getReleasecentercode() == releasecenter.getReleasecentercode() ? 'true' : 'false'}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span>마켓팅문구</span></td>
+                    <td colspan="3"><input type="text" name="marketingword" id="MarketingWord" th:value="${productDto.getMarketingword()}" maxlength="100" class="input_text" style="width:600px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>상품명</span></td>
+                    <td colspan="3"><input type="text" name="productname" id="ProductName" th:value="${productDto.getProductname()}" maxlength="100" class="input_text" style="width:600px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title"><span>상품규격</span></td>
+                    <td><input type="text" name="standard" id="Standard" th:value="${productDto.getStandard()}" maxlength="50" class="input_text" style="width:400px;" /></td>
+                    <td class="title required"><span>과세/면세</span></td>
+                    <td>
+                        <label><input type="radio" name="taxtype" id="TaxType_V" value="V" th:checked="${productDto.getTaxtype() == 'V' or productDto.getTaxtype() == null ? 'true' : 'false'}" />과세</label> &nbsp;
+                        <label><input type="radio" name="taxtype" id="TaxType_E" value="E" th:checked="${productDto.getTaxtype() == 'E' ? 'true' : 'false'}" />면세</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>브랜드</span></td>
+                    <td>
+                        <select name="brandcode" id="BrandCode">
+                            <option value="">브랜드 선택</option>
+                            <option th:each="brand : ${brandList}" th:value="${brand.getBrandcode()}" th:text="${brand.getBrandname()}" th:selected="${productDto.getBrandcode() == brand.getBrandcode() ? 'true' : 'false'}"></option>
+                        </select>
+                    </td>
+                    <td class="title required"><span>관리형태</span></td>
+                    <td>
+                        <select name="productgubn" id="ProductGubn">
+                            <option value="">관리형태 선택</option>
+                            <option value="1">위탁상품</option>
+                            <option value="2">제조상품</option>
+                            <option value="3">사입상품</option>
+                            <option value="4">직영상품</option>
+                        </select>
+                        <script type="text/javascript">
+                            $("#ProductGubn").val(`[[${productDto.getProductgubn}]]`);
+                        </script>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>원산지</span></td>
+                    <td><input type="text" name="origin" id="Origin" th:value="${productDto.getOrigin()}" maxlength="50" class="input_text" style="width:200px;" /></td>
+                    <td class="title"><span>제조사</span></td>
+                    <td><input type="text" name="maker" id="Maker" th:value="${productDto.getMaker()}" maxlength="50" class="input_text" style="width:200px;" /></td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>최소/최대판매수량</span></td>
+                    <td>
+                        <span>최소판매수량 : <input type="text" name="minsalecnt" id="MinSaleCnt" maxlength="6" class="input_text" style="width:80px;" th:value="${productDto.getMinsalecnt() == 0 ? '1' : productDto.getMinsalecnt()}" /></span> /
+                        <span>최대판매수량 : <input type="text" name="maxsalecnt" id="MaxSaleCnt" maxlength="6" class="input_text" style="width:80px;" th:value="${productDto.getMaxsalecnt() == 0 ? '10000' : productDto.getMaxsalecnt()}" /></span>
+                    </td>
+                    <td class="title required"><span>배송비무료여부</span></td>
+                    <td>
+                        <label><input type="radio" name="freedelvflag" value="Y" th:checked="${productDto.getFreedelvflag() == 'Y' ? 'true' : 'false'}" />배송비무료 가능</label> &nbsp;
+                        <label><input type="radio" name="freedelvflag" value="N" th:checked="${productDto.getFreedelvflag() == 'N' or productDto.getFreedelvflag() == null ? 'true' : 'false'}" />배송비무료 불가능</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>정기배송여부</span></td>
+                    <td>
+                        <label><input type="radio" name="fixdelvflag" value="Y" th:checked="${productDto.getFixdelvflag() == 'Y' ? 'true' : 'false'}" />정기배송 가능상품</label> &nbsp;
+                        <label><input type="radio" name="fixdelvflag" value="N" th:checked="${productDto.getFixdelvflag() == 'N' or productDto.getFixdelvflag() == null ? 'true' : 'false'}" />정기배송 불가능상품</label>
+                    </td>
+                    <td class="title required"><span>판매상태</span></td>
+                    <td>
+                        <label><input type="radio" name="salestate" value="Y" />판매중</label> &nbsp;
+                        <label><input type="radio" name="salestate" value="N" checked="checked" />판매중지</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>사입가(원가)</span></td>
+                    <td>
+                        <input type="text" name="costprice" id="CostPrice" maxlength="7" class="input_text" style="width:150px;" th:value="${productDto.getCostprice()}" />
+                    </td>
+                    <td class="title required"><span>대리점가</span></td>
+                    <td>
+                        <input type="text" name="agencyprice" id="AgencyPrice" maxlength="7" class="input_text" style="width:150px;" th:value="${productDto.getAgencyprice()}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>정상가</span></td>
+                    <td>
+                        <input type="text" name="tagprice" id="TagPrice" maxlength="7" class="input_text" style="width:150px;" th:value="${productDto.getTagprice()}" />
+                    </td>
+                    <td class="title required"><span>판매가</span></td>
+                    <td>
+                        <input type="text" name="saleprice" id="SalePrice" maxlength="7" class="input_text" style="width:150px;" th:value="${productDto.getSaleprice()}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>임직원가</span></td>
+                    <td>
+                        <input type="text" name="empprice" id="EmpPrice" maxlength="7" class="input_text" style="width:150px;" th:value="${productDto.getEmpprice()}" />
+                    </td>
+                    <td class="title required"><span>사업자회원가</span></td>
+                    <td>
+                        <input type="text" name="bizprice" id="BizPrice" maxlength="7" class="input_text" style="width:150px;" th:value="${productDto.getBizprice()}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span>검색키워드</span></td>
+                    <td colspan="3">
+                        <input type="text" name="keyword" id="Keyword" maxlength="100" class="input_text" style="width:600px;" th:value="${productDto.getKeyword()}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span>상세설명</span></td>
+                    <td colspan="3">
+                        <textarea name="description" id="description" style="width:100%;height:250px;">[[${productDto.getDescription()}]]</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title required"><span>대표 이미지</span></td>
+                    <td colspan="3">
+                        <input type="file" name="image1" id="Image1" class="input_text" style="width:250px;" /> (1200 * 1200 픽셀)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title"><span>보조 이미지</span></td>
+                    <td colspan="3">
+                        <div style="padding-bottom:5px"><input type="file" name="image2" id="Image2" class="input_text" style="width:250px;" /> (1200 * 1200 픽셀)</div>
+                        <div><input type="file" name="image3" id="Image3" class="input_text" style="width:250px;" /> (1200 * 1200 픽셀)</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="height:15px"></div>
+
+            <table class="sub_table">
+                <colgroup>
+                    <col style="width: 15%;" />
+                    <col style="width: auto;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="title required"><span>정보고시 제품정보</span></td>
+                    <td>
+                        <select name="producttype" id="ProductType" onclick="chg_PBType('');">
+                            <option value="">정보고시 항목 선택</option>
+                            <option th:each="gosi : ${gosiList}" th:value="${gosi.getCode1()}" th:text="${gosi.getName1()}" th:selected="${gosi.getCode1() == productDto.getProducttype() ? 'true' : 'false'}"></option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div id="ProductBasicInfo">
+            </div>
+
+        </form>
+    </div>
+
+    <div class="posR mt20 mb20" th:if="${Permission.isWrite()}">
+        <div class="ac">
+            <a href="javascript:ins_Product();" id="IBTN" class="btn-c"><span>입력</span></a>
+            <a href="javascript:ins_Product_Temp();" id="IBTN1" class="btn-c"><span>미리보기</span></a>
+            <a href="/product/product/list" class="btn-d"><span>목록</span></a>
+        </div>
+    </div>
+
+    <form name="popup" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    </form>
+
+    <script type="text/javascript">
+        //에디터 로드
+        var oEditors = [];
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: "description",
+            sSkinURI: "/SmartEditor/SEditorSkin.html",
+            fCreator: "createSEditorInIFrame",
+            folderName: "products"
+        });
+
+        $(function () {
+            var productCode = '[[${productDto.getProductcode()}]]';
+            if (productCode != "") {
+                chg_PBType(productCode);
+            }
+
+            $("input:radio[name='productclass']").on("click", function () {
+                var val = $(this).val();
+
+                if (val == "P") {
+                    $("#Public").show();
+                    $("#Set").hide();
+                    $("#Group").hide();
+
+                    $("#SetProductList").html("");
+                    $("#GroupProductList").html("");
+
+                    $("#CostPrice").attr("readonly", false).css("background-color", "#ffffff").val("");
+                    $("#AgencyPrice").attr("readonly", false).css("background-color", "#ffffff").val("");
+                    $("#TagPrice").attr("readonly", false).css("background-color", "#ffffff").val("");
+                    $("#SalePrice").attr("readonly", false).css("background-color", "#ffffff").val("");
+                    $("#EmpPrice").attr("readonly", false).css("background-color", "#ffffff").val("");
+                    $("#BizPrice").attr("readonly", false).css("background-color", "#ffffff").val("");
+                }
+                else if (val == "S") {
+                    $("#Public").hide();
+                    $("#Set").show();
+                    $("#Group").hide();
+
+                    $("#GroupProductList").html("");
+
+                    $("#CostPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#AgencyPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#TagPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#SalePrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#EmpPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#BizPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                }
+                else if (val == "G") {
+                    $("#Public").hide();
+                    $("#Set").hide();
+                    $("#Group").show();
+
+                    $("#SetProductList").html("");
+
+                    $("#CostPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#AgencyPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#TagPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#SalePrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#EmpPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                    $("#BizPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("");
+                }
+                else {
+                    $("#Public").hide();
+                    $("#Set").hide();
+                    $("#Group").hide();
+
+                    $("#SetProductList").html("");
+                    $("#GroupProductList").html("");
+
+                    $("#CostPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("0");
+                    $("#AgencyPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("0");
+                    $("#TagPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("0");
+                    $("#SalePrice").attr("readonly", true).css("background-color", "#f7f7f7").val("0");
+                    $("#EmpPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("0");
+                    $("#BizPrice").attr("readonly", true).css("background-color", "#f7f7f7").val("0");
+                }
+            });
+        });
+    </script>
+</div>
