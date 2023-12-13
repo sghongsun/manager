@@ -31,5 +31,9 @@ public interface ProductMapper {
     int select_product_setproduct_temp_by_createid_for_count(String createid);
     ProductDto select_product_setproduct_by_createid_for_dupcheck(String createid, int count);
     void update_product_by_productcode_for_itemno_set(int productCode, String itemNo);
-
+    void delete_product_excel_temp_by_createid(String createid);
+    void insert_product_excel_temp_by_createid(ProductExcelAddDto productExcelAddDto);
+    int select_product_excel_temp_by_createid_for_totalcount(ProductExcelAddErrorSearchDto productExcelAddErrorSearchDto);
+    List<ProductExcelAddErrorDto> select_product_excel_temp_by_createid_for_list(ProductExcelAddErrorSearchDto productExcelAddErrorSearchDto);
+    List<ProductExcelAddErrorDto> select_product_excel_temp_by_createid_for_exceldown(String createid);
 }

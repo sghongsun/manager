@@ -15,22 +15,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.swing.text.View;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/product/product")
+@RequestMapping("/product")
 public class ProductController {
     private final ProductService productService;
     private final BrandService brandService;
     private final CategoryService categoryService;
 
-    @GetMapping("/list")
+    @GetMapping("/product/list")
     public String productList(
             Model model,
             @Permission PermissionDto permissionDto,
@@ -52,7 +56,7 @@ public class ProductController {
         return "product/product/list";
     }
 
-    @PostMapping("/ajax/statemodify")
+    @PostMapping("/product/ajax/statemodify")
     public void productStateModifyOk(
             HttpServletResponse response,
             @Validated ProductStateModifyRequest productStateModifyRequest
@@ -69,7 +73,7 @@ public class ProductController {
         out.flush();
     }
 
-    @PostMapping("/ajax/gosiinfo")
+    @PostMapping("/product/ajax/gosiinfo")
     public String GosiInfo(
             Model model,
             @RequestParam(required = false) String ProductCode,
@@ -79,7 +83,7 @@ public class ProductController {
         return "product/product/ajax/gosilist";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/product/add")
     public String productAdd(
             Model model,
             @Permission PermissionDto permissionDto
@@ -94,7 +98,7 @@ public class ProductController {
         return "product/product/add";
     }
 
-    @GetMapping("/copy")
+    @GetMapping("/product/copy")
     public String productCopy(
             Model model,
             @Permission PermissionDto permissionDto,
@@ -115,7 +119,7 @@ public class ProductController {
         return "product/product/copy";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/product/add")
     public void ProductAddOk(
             @Validated ProductAddRequest productAddRequest
     ) throws IOException {
@@ -127,7 +131,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/popup/setproductadd")
+    @PostMapping("/product/popup/setproductadd")
     public String setProductAdd(
             Model model,
             @ModelAttribute("searchDto") SetProductSearchDto setProductSearchDto
@@ -167,7 +171,7 @@ public class ProductController {
         return "product/product/popup/setproductadd";
     }
 
-    @PostMapping("/ajax/setproductapplyok")
+    @PostMapping("/product/ajax/setproductapplyok")
     public String setProductAddApplyOk(
             Model model,
             SetProductSearchDto setProductSearchDto
@@ -210,7 +214,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/ajax/setproductduplicationcheck")
+    @PostMapping("/product/ajax/setproductduplicationcheck")
     public void setProductDuplicationCheck(
             HttpServletResponse response,
             @RequestParam String SetProductCodes,
@@ -224,7 +228,7 @@ public class ProductController {
         out.flush();
     }
 
-    @PostMapping("/popup/groupproductadd")
+    @PostMapping("/product/popup/groupproductadd")
     public String groupProductAdd(
             Model model,
             @ModelAttribute("searchDto") GroupProductSearchDto groupProductSearchDto
@@ -244,7 +248,7 @@ public class ProductController {
         return "product/product/popup/groupproductadd";
     }
 
-    @PostMapping("/ajax/groupproductapplyok")
+    @PostMapping("/product/ajax/groupproductapplyok")
     public String groupProductApplyOk(
             Model model,
             GroupProductSearchDto groupProductSearchDto
@@ -260,5 +264,56 @@ public class ProductController {
             CommonUtil.AlertMessage(result, "ajax");
             return "blank";
         }
+    }
+
+    @GetMapping("/excel_add")
+    public String excelProductAdd(
+            Model model,
+            @Permission PermissionDto permissionDto
+    ) {
+        model.addAttribute("Permission", permissionDto);
+        return "product/product/excel_add";
+    }
+
+    @PostMapping("/excel_add")
+    public String excelProductAddOk(
+            @RequestParam MultipartFile FileName
+    ) throws IOException {
+        String result = productService.insertProductExcel(FileName);
+        if (result.equals("OK")) {
+            return "redirect:/product/excel_add/error";
+        } else {
+            CommonUtil.AlertMessage(result, "history.back();");
+            return "blank";
+        }
+    }
+
+    @GetMapping("/excel_add/error")
+    public String excelProductAddError(
+            Model model,
+            @Permission PermissionDto permissionDto,
+            @ModelAttribute("searchDto") ProductExcelAddErrorSearchDto productExcelAddErrorSearchDto
+    ) {
+        model.addAttribute("Permission", permissionDto);
+        model.addAttribute("errorList", productService.getProductExcelAddErrorList(productExcelAddErrorSearchDto));
+        return "product/product/excel_add_error_list";
+    }
+
+    @GetMapping("/excel_add/error/excel_down")
+    public String excelProductAddErrorDown(
+            HttpServletResponse response,
+            Model model,
+            @Permission PermissionDto permissionDto
+    ) throws IOException {
+        model.addAttribute("Permission", permissionDto);
+        model.addAttribute("errorList", productService.getProductExcelAddErrorExcelDown());
+
+        String fileName = "상품엑셀입력오류_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))+".xls";
+        String outputFileName = new String(fileName.getBytes("KSC5601"), "8859_1");
+
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.addHeader("Content-Disposition","attachment;filename=\"" + outputFileName + "\"");
+
+        return "/product/product/excel/add_error_down";
     }
 }

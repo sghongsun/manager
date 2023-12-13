@@ -1,0 +1,73 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+    <script type="text/javascript" th:src="@{/js/product/product.js(ver=${@commonUtil.getNow()})}"></script>
+    <style type="text/css">
+        .dtitle ul li { height: 25px; line-height: 25px; }
+    </style>
+    <div class="bottom_sky_line">
+        <table class="tab_table_nl" style="margin-top:0 !important;">
+            <colgroup>
+                <col style="width:150px;" />
+                <col style="width:1px;" />
+                <col style="width:150px;" />
+                <col style="width:auto;" />
+            </colgroup>
+            <tbody>
+            <tr>
+                <td class="off"><a href="/product/excel_add">엑셀업로드</a></td>
+                <td></td>
+                <td class="on"><a href="/product/excel_add/error">엑셀업로드오류</a></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="tb_data_1">
+        <div class="tip" th:if="${searchDto.getPagination() != null}" th:text="'[전체 ' + ${#numbers.formatInteger(searchDto.getPagination().getTotalRecordCount(),0,'COMMA') + ' 건]'}"></div>
+        <div class="tip" th:if="${searchDto.getPagination() == null}" th:text="'[전체 0 건]'"></div>
+        <th:block th:if="${Permission.isWrite()}">
+            <div class="btnRight3">
+                <a href="/product/excel_add/error/excel_down" class="btn-c"><span>엑셀다운로드</span></a>
+            </div>
+        </th:block>
+        <table>
+            <colgroup>
+                <col style="width:   5%;" />
+                <col style="width:   8%;" />
+                <col style="width:  20%;" />
+                <col style="width:  15%;" />
+                <col style="width:  10%;" />
+                <col style="width:  10%;" />
+                <col style="width: auto;" />
+            </colgroup>
+            <thead>
+            <tr>
+                <th>No.</th>
+                <th>ERP상품코드</th>
+                <th>상품명</th>
+                <th>규격</th>
+                <th>정상가</th>
+                <th>판매가</th>
+                <th>오류내용</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="list, loop : ${errorList.getList()}" th:style="'background-color:#ffffff'">
+                <td th:text="${searchDto.getPagination().getTotalRecordCount()-((searchDto.getPage()-1) * searchDto.getRecordsize())-loop.index}"></td>
+                <td th:text="${list.getItemNo()}"></td>
+                <td class="al pl20" th:text="${list.getProductname()}"></td>
+                <td th:text="${list.getStandard()}"></td>
+                <td th:text="${#numbers.formatInteger(list.getTagprice(), 0, 'COMMA')}"></td>
+                <td th:text="${#numbers.formatInteger(list.getSaleprice(), 0, 'COMMA')}"></td>
+                <td class="al pl20" th:text="${list.getErrmsg()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="posR" th:insert="/layout/paging" th:if="${searchDto.getPagination() != null}"></div>
+
+</div>

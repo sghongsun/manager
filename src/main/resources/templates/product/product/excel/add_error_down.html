@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <style>td { mso-number-format:\@; } </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th>No.</th>
+        <th>ERP상품코드</th>
+        <th>상품명</th>
+        <th>규격</th>
+        <th>정상가</th>
+        <th>판매가</th>
+        <th>오류내용</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="list, loop : ${errorList}">
+        <td align="center" th:text="${errorList.size() - loop.index}"></td>
+        <td align="center" th:text="${list.getItemNo()}"></td>
+        <td align="left" th:text="${list.getProductname()}"></td>
+        <td align="center" th:text="${list.getStandard()}"></td>
+        <td align="center" th:text="${list.getTagprice()}"></td>
+        <td align="center" th:text="${list.getSaleprice()}"></td>
+        <td align="left" th:text="${list.getErrmsg()}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</html>

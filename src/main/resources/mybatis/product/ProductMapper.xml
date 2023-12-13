@@ -616,6 +616,178 @@
         set session transaction isolation level repeatable read;
     </select>
 
+    <delete id="delete_product_excel_temp_by_createid">
+        delete from products_excel_temp
+        where createid = #{createid}
+    </delete>
+
+    <insert id="insert_product_excel_temp_by_createid" parameterType="productExcelAddDto">
+        insert into products_excel_temp (
+        <include refid="products_excel_temp_field" />,
+        image1,
+        image2,
+        image3,
+        gosi1,
+        gosi2,
+        gosi3,
+        gosi4,
+        gosi5,
+        gosi6,
+        gosi7,
+        gosi8,
+        gosi9,
+        gosi10,
+        gosi11,
+        gosi12,
+        gosi13,
+        gosi14,
+        gosi15,
+        gosi16,
+        gosi17,
+        gosi18,
+        gosi19,
+        gosi20,
+        gosi21,
+        gosi22,
+        gosi23,
+        gosi24,
+        gosi25,
+        gosi26,
+        gosi27,
+        gosi28,
+        gosi29,
+        gosi30,
+        gosi31,
+        gosi32,
+        gosi33,
+        errcode,
+        errmsg,
+        createid,
+        createip
+        )
+        values (
+        #{itemNo},
+        #{categorycode1},
+        #{categorycode2},
+        #{productclass},
+        #{marketingword},
+        #{productname},
+        #{standard},
+        #{productshortname},
+        #{onlineflag},
+        #{empflag},
+        #{bizflag},
+        #{costprice},
+        #{agencyprice},
+        #{tagprice},
+        #{saleprice},
+        #{empprice},
+        #{bizprice},
+        #{minsalecnt},
+        #{maxsalecnt},
+        #{qty},
+        #{offflag},
+        #{salestate},
+        #{brandcode},
+        #{keyword},
+        #{description},
+        #{fixdelvflag},
+        #{freedelvflag},
+        #{taxtype},
+        #{productkind},
+        #{producttype},
+        #{productgubn},
+        #{makeyear},
+        #{makedm},
+        #{maker},
+        #{origincode},
+        #{origin},
+        #{sex},
+        #{stockupflag},
+        #{releasecentercode},
+        #{releaseproductcode},
+        #{image1},
+        #{image2},
+        #{image3},
+        #{gosi[0]},
+        #{gosi[1]},
+        #{gosi[2]},
+        #{gosi[3]},
+        #{gosi[4]},
+        #{gosi[5]},
+        #{gosi[6]},
+        #{gosi[7]},
+        #{gosi[8]},
+        #{gosi[9]},
+        #{gosi[10]},
+        #{gosi[11]},
+        #{gosi[12]},
+        #{gosi[13]},
+        #{gosi[14]},
+        #{gosi[15]},
+        #{gosi[16]},
+        #{gosi[17]},
+        #{gosi[18]},
+        #{gosi[19]},
+        #{gosi[20]},
+        #{gosi[21]},
+        #{gosi[22]},
+        #{gosi[23]},
+        #{gosi[24]},
+        #{gosi[25]},
+        #{gosi[26]},
+        #{gosi[27]},
+        #{gosi[28]},
+        #{gosi[29]},
+        #{gosi[30]},
+        #{gosi[31]},
+        #{gosi[32]},
+        #{errcode},
+        #{errmsg},
+        #{createid},
+        #{createip}
+        )
+    </insert>
+
+    <select id="select_product_excel_temp_by_createid_for_totalcount" parameterType="productExcelAddErrorSearchDto" resultType="int">
+        set session transaction isolation level read uncommitted;
+
+        select
+            ifnull(count(item_no), 0) as totalcount
+        from            products_excel_temp
+        where           createid = #{createid}
+          and             errcode != '00';
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_excel_temp_by_createid_for_list" parameterType="productExcelAddErrorSearchDto" resultType="productExcelAddErrorDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            item_no, productname, standard, tagprice, saleprice, errcode, errmsg
+        from            products_excel_temp
+        where           createid = #{createid}
+          and             errcode != '00'
+        order by        idx asc
+            limit           #{pagination.limitStart}, #{recordsize};
+
+        set session transaction isolation level repeatable read;
+    </select>
+
+    <select id="select_product_excel_temp_by_createid_for_exceldown" resultType="productExcelAddErrorDto">
+        set session transaction isolation level read uncommitted;
+
+        select
+            item_no, productname, standard, tagprice, saleprice, errcode, errmsg
+        from            products_excel_temp
+        where           createid = #{createid}
+          and             errcode != '00'
+        order by        idx asc;
+
+        set session transaction isolation level repeatable read;
+    </select>
+
     <insert id="insert_product_history_by_productcode">
         insert into products_history (
         productcode,

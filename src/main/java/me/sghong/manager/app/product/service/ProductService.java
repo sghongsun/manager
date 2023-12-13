@@ -2,9 +2,12 @@ package me.sghong.manager.app.product.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import me.sghong.manager.ManagerApplication;
 import me.sghong.manager.app.common.dto.Pagination;
 import me.sghong.manager.app.common.dto.PagingDto;
 import me.sghong.manager.app.product.dto.*;
+import me.sghong.manager.app.product.mapper.BrandMapper;
+import me.sghong.manager.app.product.mapper.CategoryMapper;
 import me.sghong.manager.app.product.mapper.ProductMapper;
 import me.sghong.manager.app.product.request.ProductAddRequest;
 import me.sghong.manager.app.product.request.ProductStateModifyRequest;
@@ -12,8 +15,16 @@ import me.sghong.manager.exception.CustomException;
 import me.sghong.manager.util.CommonUtil;
 import me.sghong.manager.util.Constants;
 import me.sghong.manager.util.FileUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.http.fileupload.impl.FileUploadIOException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -21,6 +32,8 @@ import java.util.*;
 @Service
 public class ProductService {
     private final ProductMapper productMapper;
+    private final CategoryMapper categoryMapper;
+    private final BrandMapper brandMapper;
 
     public PagingDto<ProductListDto> getProductList(ProductSearchDto productSearchDto) {
         if (productSearchDto.getKeyword() != null && !productSearchDto.getKeyword().isEmpty()) {
@@ -503,6 +516,388 @@ public class ProductService {
             return "선택된 상품이 없습니다.";
         }
         return "OK";
+    }
+
+    @Transactional
+    public String insertProductExcel(MultipartFile fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return "엑셀 파일을 등록하여 주세요.";
+        }
+
+        if (!FileUtil.validIFileMimetype(fileName, "xls")) {
+            return "엑셀 파일을 등록하여 주세요.";
+        }
+
+        try {
+            //Temp Table 초기화
+            productMapper.delete_product_excel_temp_by_createid(CommonUtil.getSession("adminid"));
+
+            Workbook workbook = null;
+
+            if (StringUtils.getFilenameExtension(fileName.getOriginalFilename()).equals("xlsx")) {
+                workbook = new XSSFWorkbook(fileName.getInputStream());
+            } else if (StringUtils.getFilenameExtension(fileName.getOriginalFilename()).equals("xls")) {
+                workbook = new HSSFWorkbook(fileName.getInputStream());
+            }
+
+            assert workbook != null;
+            Sheet worksheet = workbook.getSheetAt(0);
+            for (int i = 9; i < worksheet.getPhysicalNumberOfRows(); i++) {
+                Row row = worksheet.getRow(i);
+                ProductExcelAddDto data = new ProductExcelAddDto();
+
+                data.setItemNo(row.getCell(0).getStringCellValue());                                                //ERP 상품코드
+                data.setProductname(row.getCell(1).getStringCellValue());                                           //상품명
+                data.setCategorycode1(row.getCell(2).getStringCellValue());                                         //대분류코드
+                data.setCategorycode2(row.getCell(3).getStringCellValue());                                         //소분류코드
+                data.setMarketingword(row.getCell(4).getStringCellValue());                                         //마케팅문구
+                data.setStandard(row.getCell(5).getStringCellValue());                                              //규격
+                data.setBrandcode(row.getCell(6).getStringCellValue());                                             //브랜드코드
+                data.setOnlineflag(row.getCell(7).getStringCellValue());                                            //온라인전용
+                data.setBizflag(row.getCell(8).getStringCellValue());                                               //사업자전용
+                data.setFixdelvflag(row.getCell(9).getStringCellValue());
+
+                try {
+                    data.setCostprice(Integer.parseInt(String.valueOf(row.getCell(10).getStringCellValue())));      //사입가
+                } catch (Exception ex) {
+                    data.setCostprice(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("사입가 오류 입니다.");
+                }
+
+                try {
+                    data.setAgencyprice(Integer.parseInt(String.valueOf(row.getCell(11).getStringCellValue())));    //대리점가
+                } catch (Exception ex) {
+                    data.setAgencyprice(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("대리점가 오류 입니다.");
+                }
+
+                try {
+                    data.setTagprice(Integer.parseInt(String.valueOf(row.getCell(12).getStringCellValue())));       //정상가
+                } catch (Exception ex) {
+                    data.setTagprice(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("정상가 오류 입니다.");
+                }
+
+                try {
+                    data.setSaleprice(Integer.parseInt(String.valueOf(row.getCell(13).getStringCellValue())));      //판매가
+                } catch (Exception ex) {
+                    data.setSaleprice(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("판매가 오류 입니다.");
+                }
+
+                try {
+                    data.setEmpprice(Integer.parseInt(String.valueOf(row.getCell(14).getStringCellValue())));      //임직원가
+                } catch (Exception ex) {
+                    data.setEmpprice(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("임직원가 오류 입니다.");
+                }
+
+                try {
+                    data.setBizprice(Integer.parseInt(String.valueOf(row.getCell(15).getStringCellValue())));      //사업자가
+                } catch (Exception ex) {
+                    data.setBizprice(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("사업자가 오류 입니다.");
+                }
+
+                try {
+                    data.setQty(Integer.parseInt(String.valueOf(row.getCell(16).getStringCellValue())));           //묶음수량
+                } catch (Exception ex) {
+                    data.setQty(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("묶음수량 오류 입니다.");
+                }
+
+                try {
+                    data.setMinsalecnt(Integer.parseInt(String.valueOf(row.getCell(17).getStringCellValue())));    //최소판매수량
+                } catch (Exception ex) {
+                    data.setMinsalecnt(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("최소판매수량 오류 입니다.");
+                }
+
+                try {
+                    data.setMaxsalecnt(Integer.parseInt(String.valueOf(row.getCell(18).getStringCellValue())));    //최대판매수량
+                } catch (Exception ex) {
+                    data.setMaxsalecnt(0);
+                    data.setErrcode("A1");
+                    data.setErrmsg("최대판매수량 오류 입니다.");
+                }
+
+                data.setKeyword(row.getCell(19).getStringCellValue());                                             //검색키워드
+                data.setDescription(row.getCell(20).getStringCellValue());                                         //상세설명
+
+                if (data.getErrcode() == null) {
+                    try {
+                        data.setImage1(row.getCell(21).getStringCellValue());                                      //대표이미지
+
+                        if (!data.getImage1().isEmpty() && !FileUtil.FileExists("/update/product_img_temp/" + data.getImage1())) {
+                            data.setErrcode("I1");
+                            data.setErrmsg("대표이미지 파일 없음 오류 입니다.");
+                        }
+                    } catch (Exception ex) {
+                        data.setImage1("");
+                    }
+                }
+
+                if (data.getErrcode() == null) {
+                    try {
+                        data.setImage2(row.getCell(22).getStringCellValue());                                       //보조이미지1
+
+                        if (!data.getImage2().isEmpty() && !FileUtil.FileExists("/update/product_img_temp/" + data.getImage2())) {
+                            data.setErrcode("I2");
+                            data.setErrmsg("보조 이미지1 파일 없음 오류 입니다.");
+                        }
+                    } catch (Exception ex) {
+                        data.setImage2("");
+                    }
+                }
+
+                if (data.getErrcode() == null) {
+                    try {
+                        data.setImage3(row.getCell(23).getStringCellValue());                                       //보조이미지2
+
+                        if (!data.getImage3().isEmpty() && !FileUtil.FileExists("/update/product_img_temp/" + data.getImage3())) {
+                            data.setErrcode("I3");
+                            data.setErrmsg("보조 이미지2 파일 없음 오류 입니다.");
+                        }
+                    } catch (Exception ex) {
+                        data.setImage3("");
+                    }
+                }
+
+                data.setProductgubn(row.getCell(24).getStringCellValue());                                         //관리형태 : 1.위탁상품 2.제조상품 3.사입상품 4.직영상품
+                data.setProducttype(row.getCell(25).getStringCellValue());                                         //정보고시제품정보
+
+                ArrayList<String> gosi = new ArrayList<>();
+                for (int gosicnt=0; gosicnt<33; gosicnt++) {
+                    try {
+                        gosi.add(row.getCell(26 + gosicnt).getStringCellValue());                                   //고시항목
+                    } catch (Exception ex) {
+                        gosi.add("");
+                    }
+                }
+                data.setGosi(gosi);
+
+                try {
+                    data.setMaker(row.getCell(27).getStringCellValue());                                            //제조사
+                } catch (Exception ex) {
+                    data.setMaker("");
+                }
+
+                try {
+                    data.setOrigin(row.getCell(28).getStringCellValue());                                           //제조국(원산지)
+                } catch (Exception ex) {
+                    data.setOrigin("");
+                }
+
+                data.setReleasecentercode("001");                                                                          //출고지
+                data.setEmpflag("N");                                                                                      //임직원전용
+                data.setFreedelvflag("N");                                                                                 //무료배송여부
+                data.setTaxtype("V");                                                                                      //과세/면세구분(V:과세, E:면세)
+                data.setSalestate("N");                                                                                    //판매상태
+                data.setOffflag("Y");                                                                                      //품절상태
+
+                if (data.getBizflag().equals("N")) {
+                    data.setBizprice(data.getSaleprice());
+                }
+
+                if (data.getQty() == 1) {
+                    data.setProductclass("P");
+                } else {
+                    data.setProductclass("S");
+                }
+
+                data.setDescription(data.getDescription().replace("http://", "https://"));
+
+                if (data.getErrcode() == null && data.getProducttype().length() != 3) {
+                    data.setErrcode("B1");
+                    data.setErrmsg("정보고시코드 형식 오류 입니다.");
+                }
+
+                if (data.getErrcode() == null && !data.getProductgubn().equals("1") && !data.getProductgubn().equals("2") && !data.getProductgubn().equals("3") && !data.getProductgubn().equals("4")) {
+                    data.setErrcode("B2");
+                    data.setErrmsg("관리형태 오류 입니다.");
+                }
+
+                if (data.getErrcode() == null && categoryMapper.select_by_category1(data.getCategorycode1()) == null) {
+                    data.setErrcode("C1");
+                    data.setErrmsg("대분류코드 없음 오류 입니다.");
+                }
+
+                if (data.getErrcode() == null && categoryMapper.select_by_category2(data.getCategorycode1(), data.getCategorycode2()) == null) {
+                    data.setErrcode("C2");
+                    data.setErrmsg("소분류코드 없음 오류 입니다.");
+                }
+
+                if (data.getErrcode() == null && brandMapper.select_by_brandcode(data.getBrandcode()) == null) {
+                    data.setErrcode("C3");
+                    data.setErrmsg("브랜드코드 없음 오류 입니다.");
+                }
+
+                //세트상품의 가격 비교
+                int unitproductcode = 0;
+                if (data.getErrcode() == null && data.getProductclass().equals("S")) {
+                    ProductDto productDto = productMapper.select_product_by_itemNo(data.getItemNo());
+                    if (productDto != null) {
+                        data.setReleasecentercode(productDto.getReleasecentercode());
+                        unitproductcode = productDto.getProductcode();
+
+                        if (productDto.getTagprice() * data.getQty() == productDto.getTagprice()) {
+                            data.setErrcode("E1");
+                            data.setErrmsg("세트상품 정상가 단품과 동일 오류 입니다.");
+                        } else if (data.getSaleprice() == productDto.getSaleprice()) {
+                            data.setErrcode("E1");
+                            data.setErrmsg("세트상품 판매가 단품과 동일 오류 입니다.");
+                        } else if (data.getEmpprice() == productDto.getEmpprice()) {
+                            data.setErrcode("E1");
+                            data.setErrmsg("세트상품 임직원가 단품과 동일 오류 입니다.");
+                        } else if (data.getBizprice() == productDto.getBizprice()) {
+                            data.setErrcode("E1");
+                            data.setErrmsg("세트상품 사업자가 단품과 동일 오류 입니다.");
+                        }
+                    } else {
+                        data.setErrcode("E0");
+                        data.setErrmsg("미등록된 단품상품 코드 오류 입니다.");
+                    }
+                }
+
+                //단일상품 중 이미 등록된 상품코드(ITEM_NO)
+                if (data.getErrcode() == null && data.getQty() == 1 && productMapper.select_product_by_itemNo(data.getItemNo()) != null) {
+                    data.setErrcode("E2");
+                    data.setErrmsg("이미 등록된 상품 코드 오류 입니다.");
+                }
+
+                //상품 고시 확인
+                if (data.getErrcode() == null && productMapper.select_product_gosi_category1_by_code1(data.getProducttype()) == null) {
+                    data.setErrcode("E3");
+                    data.setErrmsg("없는 고시코드 정보 오류 입니다.");
+                }
+
+                if (data.getErrcode() == null || data.getErrcode().isEmpty()) {
+                    data.setErrcode("00");
+                    data.setErrmsg("");
+                }
+                data.setCreateid(CommonUtil.getSession("adminid"));
+                data.setCreateip(CommonUtil.getSession("ip"));
+
+                //Temp Data Insert
+                productMapper.insert_product_excel_temp_by_createid(data);
+
+                if (data.getErrcode().equals("00")) {
+                    //상품정보
+                    ProductDto productDto = ProductDto.builder()
+                            .itemNo(data.getItemNo())
+                            .categorycode1(data.getCategorycode1())
+                            .categorycode2(data.getCategorycode2())
+                            .productclass(data.getProductclass())
+                            .marketingword(data.getMarketingword())
+                            .productname(data.getProductname())
+                            .standard(data.getStandard())
+                            .onlineflag(data.getOnlineflag())
+                            .empflag(data.getEmpflag())
+                            .bizflag(data.getBizflag())
+                            .costprice(data.getCostprice())
+                            .agencyprice(data.getAgencyprice())
+                            .tagprice(data.getTagprice())
+                            .saleprice(data.getSaleprice())
+                            .empprice(data.getEmpprice())
+                            .bizprice(data.getBizprice())
+                            .minsalecnt(data.getMinsalecnt())
+                            .maxsalecnt(data.getMaxsalecnt())
+                            .salestate(data.getSalestate())
+                            .offflag("Y")
+                            .brandcode(data.getBrandcode())
+                            .keyword(data.getKeyword())
+                            .description(data.getDescription())
+                            .fixdelvflag(data.getFixdelvflag())
+                            .freedelvflag(data.getFreedelvflag())
+                            .taxtype(data.getTaxtype())
+                            .producttype(data.getProducttype())
+                            .productgubn(data.getProductgubn())
+                            .maker(data.getMaker())
+                            .origin(data.getOrigin())
+                            .releasecentercode(data.getReleasecentercode())
+                            .createid(CommonUtil.getSession("adminid"))
+                            .createip(CommonUtil.getSession("ip"))
+                            .build();
+                    productMapper.insert_product(productDto);
+                    int productCode = productDto.getProductcode();
+
+                    if (data.getProductclass().equals("S")) {
+                        productMapper.update_product_by_productcode_for_itemno_set(productCode, "S"+productCode);
+                    }
+
+                    //단품의 경우 unit 상품코드
+                    if (unitproductcode == 0) {
+                        unitproductcode = productCode;
+                    }
+
+                    //고시정보
+                    insertProductGosi(productCode, data.getProducttype(), data.getGosi());
+
+                    //유닛정보
+                    ProductUnitDto productUnitDto = ProductUnitDto.builder()
+                            .productcode(productCode)
+                            .unitproductcode(unitproductcode)
+                            .qty(data.getQty())
+                            .unitsaleprice(data.getSaleprice())
+                            .unitempprice(data.getEmpprice())
+                            .unitbizprice(data.getBizprice())
+                            .standardflag("Y")
+                            .createid(CommonUtil.getSession("adminid"))
+                            .createip(CommonUtil.getSession("ip"))
+                            .build();
+                    productMapper.insert_product_unit(productUnitDto);
+
+                    //재고정보
+                    if (data.getProductclass().equals("P")) {
+                        ProductStockDto productStockDto = ProductStockDto.builder()
+                                .productcode(productCode)
+                                .itemNo(data.getItemNo())
+                                .stockqty(0)
+                                .saleqty(0)
+                                .outsaleqty(0)
+                                .restqty(0)
+                                .createid(CommonUtil.getSession("adminid"))
+                                .createip(CommonUtil.getSession("ip"))
+                                .build();
+                        productMapper.insert_product_stock(productStockDto);
+                    }
+                    insertProductHistory(productCode);
+                    FileUtil.uploadFile(fileName, "excelupload/product_add");
+                }
+            }
+            return "OK";
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+            FileUtil.uploadFile(fileName, "excelupload/product_add");
+            throw new CustomException("엑셀 파일 업로드 오류 입니다.", "history.back();");
+        }
+    }
+
+    public PagingDto<ProductExcelAddErrorDto> getProductExcelAddErrorList(ProductExcelAddErrorSearchDto productExcelAddErrorSearchDto) {
+        productExcelAddErrorSearchDto.setCreateid(CommonUtil.getSession("adminid"));
+        int count = productMapper.select_product_excel_temp_by_createid_for_totalcount(productExcelAddErrorSearchDto);
+
+        if (count < 1) {
+            return new PagingDto<>(Collections.emptyList(), null);
+        }
+
+        Pagination pagination = new Pagination(count, productExcelAddErrorSearchDto);
+        productExcelAddErrorSearchDto.setPagination(pagination);
+
+        List<ProductExcelAddErrorDto> list = productMapper.select_product_excel_temp_by_createid_for_list(productExcelAddErrorSearchDto);
+        return new PagingDto<>(list, pagination);
+    }
+
+    public List<ProductExcelAddErrorDto> getProductExcelAddErrorExcelDown() {
+        return productMapper.select_product_excel_temp_by_createid_for_exceldown(CommonUtil.getSession("adminid"));
     }
 
     @Transactional
