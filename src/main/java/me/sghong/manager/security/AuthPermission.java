@@ -79,12 +79,12 @@ public class AuthPermission {
                 }
             }
         }
-        if (!adminGroupDto.getGroupread().contains(menuDto.getMenucode())) {
+        if (!adminGroupDto.getGroupread().equals("0") && !adminGroupDto.getGroupread().contains(menuDto.getMenucode())) {
             CommonUtil.AlertMessage("권한이 없습니다.", returnPageType);
             return null;
         }
 
-        boolean isWrite = adminGroupDto.getGroupwrite().contains(menuDto.getMenucode());
+        boolean isWrite = adminGroupDto.getGroupwrite().equals("0") || adminGroupDto.getGroupwrite().contains(menuDto.getMenucode());
         if (pageType.equals("general")) {
             List<MenuDto> topMenuList = getTopMenu(adminGroupDto.getGroupread());
             List<MenuDto> leftMenuList = getLeftMenu(menuDto.getMenupcode());
@@ -153,7 +153,7 @@ public class AuthPermission {
            }
            /* URL 정보 */
 
-           if (!adminGroupDto.getGroupwrite().contains(menuDto.getMenucode())) {
+           if (!adminGroupDto.getGroupwrite().equals("0") && !adminGroupDto.getGroupwrite().contains(menuDto.getMenucode())) {
                CommonUtil.AlertMessage("권한이 없습니다.", returnPageType);
                return false;
            }
