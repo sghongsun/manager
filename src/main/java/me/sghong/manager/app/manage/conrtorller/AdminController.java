@@ -143,7 +143,7 @@ public class AdminController {
     ) throws IOException {
         String result = adminService.deleteAdmin(adminDeleteRequest);
         if (result.equals("OK")) {
-            CommonUtil.AlertMessage("삭제 되었습니다.", "opener.reload();self.close();");
+            CommonUtil.AlertMessage("삭제 되었습니다.", "opener.location.reload();self.close();");
         } else {
             CommonUtil.AlertMessage(result, "history.back();");
         }

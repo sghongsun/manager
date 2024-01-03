@@ -20,6 +20,7 @@ function setQueryStringParams(formid) {
 
 function getSearch() {
     $("#page").val(1);
+    document.searchForm.action = location.pathname;
     document.searchForm.submit();
 }
 
@@ -30,6 +31,7 @@ function moveList(url) {
 
 function movePage(page) {
     $("#page").val(page);
+    document.searchForm.action = location.pathname;
     document.searchForm.submit();
 }
 
